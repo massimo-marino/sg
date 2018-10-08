@@ -1,2 +1,7 @@
-# sg
-A simpe graphics set of tools
+sg
+============
+
+Simple Graphics set of tools
+
+This is a Work in Progress.
+
