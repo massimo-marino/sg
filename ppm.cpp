@@ -18,7 +18,7 @@ ppm::ppm(const std::string &fname) : width_(0), height_(0), max_col_val_(255)
   read(fname);
 }
 
-// create an "epmty" PPM image with a given width_ and height_;the r_, g_, b_ arrays are filled with zeros
+// create an "empty" PPM image with a given width_ and height_;the r_, g_, b_ arrays are filled with zeros
 ppm::ppm(const unsigned int _width, const unsigned int _height)
 {
   init(_width, _height);

@@ -1,7 +1,7 @@
 sg
 ============
 
-Simple Graphics set of tools
+Simple set of Graphics tools.
 
 This is a Work in Progress.
 

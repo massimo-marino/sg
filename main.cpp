@@ -8,6 +8,7 @@ int main()
 {
   paletteTest::testPalette();
   paletteTest::testPalette_2();
+  paletteTest::testPalette_3();
 
 //  rgbTest::testhsv2rgb();
 //  rgbTest::testrgb2hsv();

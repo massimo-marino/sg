@@ -31,21 +31,12 @@ void testPalette()
     std::cout << "\n\n";
   };
 
-  palette::Palette p4 {4};
-  palette::Palette p8 {8};
-  palette::Palette p16 {};
-  palette::Palette p32 {32};
-  palette::Palette p64 {64};
-  palette::Palette p128 {128};
-  palette::Palette p256 {256};
-
-  pl(p4);
-  pl(p8);
-  pl(p16);
-  pl(p32);
-  pl(p64);
-  pl(p128);
-  pl(p256);
+  const std::vector<uint32_t> numColors {4, 8, 16, 32, 64, 128, 256};
+  for (auto&& nc : numColors)
+  {
+    palette::Palette p {nc};
+    pl(p);
+  }
 }  // testPalette
 
 [[maybe_unused]]
@@ -60,8 +51,21 @@ void testPalette_2()
   p256.saveHSBPalette();
 
   p4.savePalettes();
-  p4.shufflePalette();
-  p4.savePalettes("p4-rgb-palette-shuffled.txt", "p4-hsb-palette-shuffled.txt");
+  p4.shufflePalette().savePalettes("p4-rgb-palette-shuffled.txt", "p4-hsb-palette-shuffled.txt");
 }  // testPalette_2
+
+[[maybe_unused]]
+void testPalette_3()
+{
+  const std::vector<uint32_t> numColors {1, 2, 5, 10, 25, 50, 100, 200, 1024, 2048};
+
+  for (auto &&c : numColors)
+  {
+    palette::Palette p {c};
+
+    p.makePaletteImage_PPM();
+    //p.shufflePalette().makePaletteImage_PPM();
+  }
+}  // testPalette_3
 
 }  // namespace PaletteTest

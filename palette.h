@@ -7,6 +7,7 @@
 
 #include "rgb.h"
 #include "randomNumberGenerators.h"
+#include "ppm.h"
 
 #include <fstream>
 #include <cstdint>
@@ -27,6 +28,30 @@ private:
   mutable float saturation_ {numColorsDefault_};
   mutable float brightness_ {numColorsDefault_};
   mutable rgbPalette_t rgbPalette_ {};
+
+  // saturation, brightness in [0,1]
+  // hue in [0,360]
+  void makePalette(const uint32_t numColors = numColorsDefault_,
+                   const float saturation = saturationDefault_,
+                   const float brightness = brightnessDefault_) const noexcept
+  {
+    numColors_ = numColors;
+    saturation_ = saturation;
+    brightness_ = brightness;
+
+    float hue{0.0f};
+    rgb::RGB c{};
+    uint32_t step{0};
+    const float increment{360.0f / numColors_};
+
+    rgbPalette_.clear();
+    rgbPalette_.reserve(numColors_);
+    for (step = 0; (step < numColors_) && (hue < 360.0f); ++step)
+    {
+      rgbPalette_.push_back(c.hsv2rgb(hue, saturation_, brightness_));
+      hue = hue + increment;
+    }
+  }  // makePalette
 
 public:
   // default ctor
@@ -101,31 +126,8 @@ public:
     return rgbPalette_;
   }
 
-  // saturation, brightness in [0,1]
-  // hue in [0,360]
-  void makePalette(const uint32_t numColors = numColorsDefault_,
-                   const float saturation = saturationDefault_,
-                   const float brightness = brightnessDefault_) const noexcept
-  {
-    numColors_ = numColors;
-    saturation_ = saturation;
-    brightness_ = brightness;
-
-    float hue{0.0f};
-    rgb::RGB c{};
-    uint32_t step{0};
-    const float increment{360.0f / numColors_};
-
-    rgbPalette_.clear();
-    rgbPalette_.reserve(numColors_);
-    for (step = 0; (step < numColors_) && (hue < 360.0f); ++step)
-    {
-      rgbPalette_.push_back(c.hsv2rgb(hue, saturation_, brightness_));
-      hue = hue + increment;
-    }
-  }  // makePalette
-
-  void shufflePalette() const noexcept
+  Palette&
+  shufflePalette() noexcept
   {
     auto seed = utilities::getRandomINT<unsigned int>(1, 0xFFFFFFFF);
 
@@ -134,6 +136,8 @@ public:
 
     // Shuffle  using the above random engine
     std::shuffle(rgbPalette_.begin(), rgbPalette_.end(), engine);
+
+    return *this;
   }
 
   void savePalettes(const std::string& rgbPalettefname = "", const std::string& hsbPalettefname = "") const noexcept(false)
@@ -207,14 +211,74 @@ public:
     outf.close();
   }  // saveRGBPalette
 
+  // make a color map image in a .ppm file
+  void makePaletteImage_PPM() const noexcept(false)
+  {
+    // Define the size_ of the image
+    // bwidth: the width of a single color band in the color map
+    unsigned int bwidth {1};
+    // bwidth is chosen depending on the number of colors
+    if ( numColors_ > 100 )
+    {
+      bwidth = 2;
+    }
+    else if ( numColors_ > 50 )
+    {
+      bwidth = 8;
+    }
+    else if ( numColors_ > 25 )
+    {
+      bwidth = 10;
+    }
+    else
+    {
+      bwidth = 50;
+    }
+    // bheight: the height of a single color band in the color map
+    // the same of the full image height
+    unsigned int bheight {100};
+    unsigned int width {bwidth * numColors_};
+    unsigned int height {bheight};
+
+    // Create an empty PPM image
+    ppm image(width, height);
+
+    size_t x {};
+    size_t y {};
+    size_t xb {0};
+    size_t colorIndex {0};
+    rgb::RGB color {};
+
+    // Visit every pixel of the image and assign a color from the palette
+    for (x = 0; x < width; x = x + bwidth)
+    {
+      color = rgbPalette_[colorIndex];
+
+      for (xb = 0; xb < bwidth; ++xb)
+      {
+        for (y = 0; y < height; ++y)
+        {
+          image.setRGB(color.Red(), color.Green(), color.Blue(), x + xb + y * width);
+        }
+      }
+      ++colorIndex;
+    }
+
+    // Save the image in a binary PPM file
+    std::string ppmPaletteFileName {"palette-" + std::to_string(numColors_) + ".ppm"};
+
+    image.write(ppmPaletteFileName);
+  }
+
 };  // class Palette
 
 }  // namespace palette
 
 namespace paletteTest
 {
-  [[maybe_unused]] void testPalette();
-  [[maybe_unused]] void testPalette_2();
+[[maybe_unused]] void testPalette();
+[[maybe_unused]] void testPalette_2();
+[[maybe_unused]] void testPalette_3();
 }
 
 std::ostream& operator<<(std::ostream &os, const  palette::Palette& p);
