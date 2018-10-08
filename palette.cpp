@@ -59,9 +59,9 @@ void testPalette_3()
 {
   const std::vector<uint32_t> numColors {1, 2, 5, 10, 25, 50, 100, 200, 1024, 2048};
 
-  for (auto &&c : numColors)
+  for (auto &&nc : numColors)
   {
-    palette::Palette p {c};
+    palette::Palette p {nc};
 
     p.makePaletteImage_PPM();
     //p.shufflePalette().makePaletteImage_PPM();

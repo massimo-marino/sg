@@ -214,7 +214,7 @@ public:
   // make a color map image in a .ppm file
   void makePaletteImage_PPM() const noexcept(false)
   {
-    // Define the size_ of the image
+    // Define the size_ of the image in pixels
     // bwidth: the width of a single color band in the color map
     unsigned int bwidth {1};
     // bwidth is chosen depending on the number of colors
