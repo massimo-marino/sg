@@ -48,8 +48,8 @@ struct BMPHeader
   std::uint16_t bfReserved2;
   std::uint32_t bfOffBits;
   std::uint32_t biSize;
-  std::int32_t biWidth;
-  std::int32_t biHeight;
+  std::uint32_t biWidth;
+  std::uint32_t biHeight;
   std::uint16_t biPlanes;
   std::uint16_t biBitCount;
   std::uint32_t biCompression;
@@ -71,57 +71,47 @@ private:
 
   mutable bmp_t data_ {};
 
-  std::int32_t width_ {0};
-  std::int32_t height_ {0};
+  std::uint32_t width_ {0};
+  std::uint32_t height_ {0};
 
-  constexpr
-  bool
-  inBounds(const std::int32_t y, const std::int32_t x) const noexcept
-  {
-    return (0 <= y) && (y < height_) && (0 <= x) && (x < width_);
-  }
-
-  static
-  constexpr
-  std::uint8_t
-  ToUint8(const double x) noexcept
-  {
-    return (x >= 1.0) ?
-           static_cast<std::uint8_t>(255) :
-           (x <= 0.0) ?
-           static_cast<std::uint8_t>(0) : static_cast<std::uint8_t>(x * 255.0 + 0.5);
-  }
+//  constexpr
+//  bool
+//  inBounds(const std::int32_t y, const std::int32_t x) const noexcept
+//  {
+//    return (0 <= y) && (y < height_) && (0 <= x) && (x < width_);
+//  }
 
 public:
 
   bmp() = default;
 
-  bmp(std::int32_t width, std::int32_t height) noexcept :
+  bmp(const std::uint32_t width, const std::uint32_t height) noexcept :
           data_(static_cast<size_t>(width * height)),
           width_(width),
           height_(height)
   {}
 
   void
-  set(const std::int32_t x, const std::int32_t y, const rgb::RGB &color) const noexcept
+  set(const std::uint32_t x, const std::uint32_t y, rgb::RGB &color) const noexcept
   {
-    if (!inBounds(y, x))
-    {
-      return;
-    }
+//    if (!inBounds(y, x))
+//    {
+//      return;
+//    }
 
     data_[static_cast<size_t>(y) * static_cast<size_t>(width_) + static_cast<size_t>(x)] = color;
+    //data_[y * width_ + x] = color;
   }
 
   constexpr
-  int32_t
+  uint32_t
   width() const noexcept
   {
     return width_;
   }
 
   constexpr
-  int32_t
+  uint32_t
   height() const noexcept
   {
     return height_;
@@ -130,7 +120,7 @@ public:
   bool
   write(const std::string &path) const noexcept(false)
   {
-    const std::int32_t rowSize {width_ * 3 + width_ % 4};
+    const std::uint32_t rowSize = width_ * 3 + width_ % 4;
     const std::uint32_t bmpsize {static_cast<uint32_t>(rowSize * height_)};
     const BMPHeader header =
             {
@@ -158,17 +148,18 @@ public:
 
       std::vector<std::uint8_t> line(static_cast<size_t>(rowSize));
 
-      for (std::int32_t y {height_ - 1}; -1 < y; --y)
+      for (std::int32_t y = static_cast<std::int32_t>(height_) - 1; (-1) < y; --y)
       {
         size_t pos{0};
 
-        for (std::int32_t x {0}; x < width_; ++x)
+        for (std::uint32_t x {0}; x < width_; ++x)
         {
-          const rgb::RGB& col{data_[static_cast<size_t>(y) * static_cast<size_t>(width_) + static_cast<size_t>(x)]};
+          const rgb::RGB& color{data_[static_cast<size_t>(y) * static_cast<size_t>(width_) + static_cast<size_t>(x)]};
+          //const rgb::RGB& color{data_[y * width_ + x]};
 
-          line[pos++] = ToUint8(col.Blue());
-          line[pos++] = ToUint8(col.Green());
-          line[pos++] = ToUint8(col.Red());
+          line[pos++] = color.Blue();
+          line[pos++] = color.Green();
+          line[pos++] = color.Red();
         }
 
         ofs.write(reinterpret_cast<const char*>(line.data()), static_cast<long>(line.size()));
