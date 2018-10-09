@@ -99,7 +99,8 @@ public:
   bmp(std::int32_t width, std::int32_t height) noexcept :
           data_(static_cast<size_t>(width * height)),
           width_(width),
-          height_(height) {}
+          height_(height)
+  {}
 
   void
   set(const std::int32_t x, const std::int32_t y, const rgb::RGB &color) const noexcept
@@ -109,7 +110,7 @@ public:
       return;
     }
 
-    data_[static_cast<size_t>(y * width_ + x)] = color;
+    data_[static_cast<size_t>(y) * static_cast<size_t>(width_) + static_cast<size_t>(x)] = color;
   }
 
   constexpr
@@ -129,8 +130,8 @@ public:
   bool
   write(const std::string &path) const noexcept(false)
   {
-    const std::int32_t rowSize{width_ * 3 + width_ % 4};
-    const std::uint32_t bmpsize{static_cast<uint32_t>(rowSize * height_)};
+    const std::int32_t rowSize {width_ * 3 + width_ % 4};
+    const std::uint32_t bmpsize {static_cast<uint32_t>(rowSize * height_)};
     const BMPHeader header =
             {
                     0x4d42,
@@ -151,19 +152,19 @@ public:
                     0
             };
 
-    if (std::ofstream ofs{path, std::ios_base::binary})
+    if (std::ofstream ofs {path, std::ios_base::binary})
     {
       ofs.write(reinterpret_cast<const char*>(&header), sizeof(header));
 
       std::vector<std::uint8_t> line(static_cast<size_t>(rowSize));
 
-      for (std::int32_t y{height_ - 1}; -1 < y; --y)
+      for (std::int32_t y {height_ - 1}; -1 < y; --y)
       {
         size_t pos{0};
 
-        for (std::int32_t x{0}; x < width_; ++x)
+        for (std::int32_t x {0}; x < width_; ++x)
         {
-          const rgb::RGB &col{data_[static_cast<size_t>(y * width_ + x)]};
+          const rgb::RGB& col{data_[static_cast<size_t>(y) * static_cast<size_t>(width_) + static_cast<size_t>(x)]};
 
           line[pos++] = ToUint8(col.Blue());
           line[pos++] = ToUint8(col.Green());

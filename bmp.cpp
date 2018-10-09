@@ -13,21 +13,21 @@ namespace bmpTest
 void
 testBMP()
 {
-  bmp::bmp image(512, 512);
+  bmp::bmp image(500, 500);
+
+  const rgb::RGB color(255, 0, 255);
 
   for (int32_t y{0}; y < image.height(); ++y)
   {
     for (int32_t x{0}; x < image.width(); ++x)
     {
-      const rgb::RGB color(0, 0, 255);
-
       image.set(x, y, color);
     }
   }
 
   std::string fname{"image.bmp"};
 
-  if (image.write(fname))
+  if ( image.write(fname) )
   {
     std::cout << "...saved \"" << fname << "\"\n";
   }
