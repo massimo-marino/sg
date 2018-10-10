@@ -14,7 +14,7 @@ int perlinDemo00()
 	unsigned int height = 1000; //450;
 
 	// Create an empty PPM image
-	ppm image(width, height);
+	ppm::ppm image(width, height);
 
 	// Create a PerlinNoise object with the reference permutation vector
 	PerlinNoise pn;
@@ -41,25 +41,25 @@ int perlinDemo00()
 
 			// Map the values to the [0, 255] interval, for simplicity we use 
 			// tones of grey
-      image.setRGB(static_cast<u_char>(floor(255 * n)),
+      image.setRGB(kk,
                    static_cast<u_char>(floor(255 * n)),
                    static_cast<u_char>(floor(255 * n)),
-                   kk);
+                   static_cast<u_char>(floor(255 * n)));
 			++kk;
 		}
 	}
 
 	// Save the image in a binary PPM file
-	image.write("figure_8_R.ppm");
+	image.write("../images/figure_8_R.ppm");
 
   // Create an empty PPM image
-  ppm image2(width, height);
+  ppm::ppm image2(width, height);
 
   // read back the just saved binary PPM file
-	image2.read("figure_8_R.ppm");
+	image2.read("../images/figure_8_R.ppm");
 
 	// save it again with another name
-  image2.write("figure_8_R-COPY.ppm");
+  image2.write("../images/figure_8_R-COPY.ppm");
 
 	return 0;
 }
@@ -71,7 +71,7 @@ int perlinDemo01()
   unsigned int height = 1000; //450;
 
   // Create an empty PPM image
-  ppm image(width, height);
+  ppm::ppm image(width, height);
 
   // Create a PerlinNoise object with a random permutation vector generated with seed
   PerlinNoise pn;
@@ -98,25 +98,25 @@ int perlinDemo01()
 
       // Map the values to the [0, 255] interval, for simplicity we use
       // tones of grey
-      image.setRGB(static_cast<u_char>(floor(255 * n)),
+      image.setRGB(kk,
                    static_cast<u_char>(floor(255 * n)),
                    static_cast<u_char>(floor(255 * n)),
-                   kk);
+                   static_cast<u_char>(floor(255 * n)));
       ++kk;
     }
   }
 
   // Save the image in a binary PPM file
-  image.write("figure_7_P.ppm");
+  image.write("../images/figure_7_P.ppm");
 
   // Create an empty PPM image
-  ppm image2(width, height);
+  ppm::ppm image2(width, height);
 
   // read back the just saved binary PPM file
-  image2.read("figure_7_P.ppm");
+  image2.read("../images/figure_7_P.ppm");
 
   // save it again with another name
-  image2.write("figure_7_P-COPY.ppm");
+  image2.write("../images/figure_7_P-COPY.ppm");
 
   return 0;
 }

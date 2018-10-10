@@ -19,15 +19,15 @@ testBMP()
   bmp::bmp image(width, height);
   rgb::RGB color {};
 
-  for (uint32_t y{0}; y < image.height(); ++y)
+  for (size_t y{0}; y < image.height(); ++y)
   {
-    for (uint32_t x{0}; x < image.width(); ++x)
+    for (size_t x{0}; x < image.width(); ++x)
     {
-      image.set(x, y, color.setRGB(x, y, 128));
+      image.setRGB(x, y, color.setRGB(x, y, 128));
     }
   }
 
-  std::string fname{"image.bmp"};
+  std::string fname{"../images/image.bmp"};
 
   if ( image.write(fname) )
   {

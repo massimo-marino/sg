@@ -31,6 +31,9 @@ public:
   explicit
   RGB(int32_t _rgb) : rgbHex_(static_cast<RGB_t>(_rgb)) {}
 
+  explicit
+  RGB(RGB_t _rgb) : rgbHex_(_rgb) {}
+
   bool
   operator==(const RGB &rhs) const noexcept
   {
@@ -83,6 +86,20 @@ public:
   setRGB(const R _r, const G _g, const B _b) noexcept
   {
     rgbHex_ = static_cast<RGB_t>(static_cast<u_char>(_r) << 16 | static_cast<u_char>(_g) << 8 | static_cast<u_char>(_b));
+    return *this;
+  }
+
+  RGB&
+  setRGB(const int32_t rgb) noexcept
+  {
+    rgbHex_ = static_cast<RGB_t>(rgb);
+    return *this;
+  }
+
+  RGB&
+  setRGB(const RGB_t rgb) noexcept
+  {
+    rgbHex_ = rgb;
     return *this;
   }
 

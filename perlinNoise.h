@@ -16,6 +16,7 @@
 
 #include <vector>
 ////////////////////////////////////////////////////////////////////////////////
+#pragma pack (push, 1)
 class PerlinNoise
 {
 private:
@@ -50,4 +51,5 @@ public:
 
 	// Get a noise value, for 2D images z can have any value
 	double noise(double x, double y, double z) const noexcept;
-};
+};  // class PerlinNoise
+#pragma pack (pop)

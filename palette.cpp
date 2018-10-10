@@ -15,11 +15,12 @@ std::ostream& operator<<(std::ostream &os, const palette::Palette& p)
   return os;
 }
 
+////////////////////////////////////////////////////////////////////////////////
 namespace paletteTest
 {
 
 [[maybe_unused]]
-void testPalette()
+void testPalette_1()
 {
   auto pl = [] (const palette::Palette& p)
   {
@@ -31,13 +32,13 @@ void testPalette()
     std::cout << "\n\n";
   };
 
-  const std::vector<uint32_t> numColors {4, 8, 16, 32, 64, 128, 256};
+  const std::vector<uint32_t> numColors {4, 8, 16, 32, 64, 128, 512};
   for (auto&& nc : numColors)
   {
     palette::Palette p {nc};
     pl(p);
   }
-}  // testPalette
+}  // testPalette_1
 
 [[maybe_unused]]
 void testPalette_2()
@@ -46,12 +47,12 @@ void testPalette_2()
   palette::Palette p128 {128};
   palette::Palette p256 {256};
 
-  p128.savePalettes();
-  p256.saveRGBPalette();
-  p256.saveHSBPalette();
+  p128.savePalettes("../palettes/", "../palettes/");
+  p256.saveRGBPalette("../palettes/");
+  p256.saveHSBPalette("../palettes/");
 
-  p4.savePalettes();
-  p4.shufflePalette().savePalettes("p4-rgb-palette-shuffled.txt", "p4-hsb-palette-shuffled.txt");
+  p4.savePalettes("../palettes/", "../palettes/");
+  p4.shufflePalette().savePalettes("../palettes/p4-shuffled-", "../palettes/p4-shuffled-");
 }  // testPalette_2
 
 [[maybe_unused]]
@@ -63,9 +64,21 @@ void testPalette_3()
   {
     palette::Palette p {nc};
 
-    p.makePaletteImage_PPM();
-    //p.shufflePalette().makePaletteImage_PPM();
+    p.makePaletteImage<ppm::ppm>("../palettes/");
+    p.makePaletteImage<bmp::bmp>("../palettes/");
+    //p.shufflePalette().makePaletteImage<ppm::ppm>("../palettes/p-shuffled-");
   }
 }  // testPalette_3
+
+[[maybe_unused]]
+void testPalette_4()
+{
+  palette::Palette p {"../palettes/0330-stage-1.2-palette.txt"};
+
+  p.savePalettes("../palettes/", "../palettes/");
+  p.makePaletteImage<ppm::ppm>("../palettes/");
+  p.makePaletteImage<bmp::bmp>("../palettes/");
+
+}  // testPalette_4
 
 }  // namespace PaletteTest

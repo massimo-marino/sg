@@ -4,24 +4,23 @@
 //
 #pragma once
 
-#include "rgb.h"
-
 #include <vector>
 #include <string>
 ////////////////////////////////////////////////////////////////////////////////
-using container = std::vector<u_char>;
+namespace ppm {
 
-class ppm final
-{
+using ppm_t = std::vector<u_char>;
+
+class ppm final {
 private:
   void init(unsigned int width = 0,
             unsigned int height = 0,
             unsigned int max_col_val = 255) const noexcept;
 
   // arrays for storing the R,G,B values
-  mutable container r_;
-  mutable container g_;
-  mutable container b_;
+  mutable ppm_t r_;
+  mutable ppm_t g_;
+  mutable ppm_t b_;
 
   mutable unsigned int width_{0};
   mutable unsigned int height_{0};
@@ -43,13 +42,28 @@ public:
   // create a PPM object and fill it with data stored in fname
   ppm(const std::string &fname);
 
-  void setR(u_char r, size_t index) const noexcept;
-  void setG(u_char g, size_t index) const noexcept;
-  void setB(u_char b, size_t index) const noexcept;
-  void setRGB(u_char  r,
-              u_char  g,
-              u_char  b,
-              size_t index) const noexcept;
+  void setR(size_t index, u_char r) const noexcept;
+
+  void setR(size_t x, size_t y, u_char r) const noexcept;
+
+  void setG(size_t index, u_char g) const noexcept;
+
+  void setG(size_t x, size_t y, u_char g) const noexcept;
+
+  void setB(size_t index, u_char b) const noexcept;
+
+  void setB(size_t x, size_t y, u_char b) const noexcept;
+
+  void setRGB(size_t index,
+              u_char r,
+              u_char g,
+              u_char b) const noexcept;
+
+  void setRGB(size_t x,
+              size_t y,
+              u_char r,
+              u_char g,
+              u_char b) const noexcept;
 
   // read the PPM image from fname
   void read(const std::string &fname) const noexcept(false);
@@ -57,3 +71,5 @@ public:
   // write the PPM image in fname
   void write(const std::string &fname) const noexcept(false);
 };
+
+}  // namespace ppm

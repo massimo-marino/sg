@@ -39,7 +39,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 namespace bmp
 {
-# pragma pack (push, 1)
+#pragma pack (push, 1)
 struct BMPHeader
 {
   std::uint16_t bfType;
@@ -61,7 +61,7 @@ struct BMPHeader
 };
 
 static_assert(sizeof(BMPHeader) == 54);
-# pragma pack (pop)
+#pragma pack (pop)
 
 using bmp_t = std::vector<rgb::RGB>;
 
@@ -91,16 +91,42 @@ public:
           height_(height)
   {}
 
-  void
-  set(const std::uint32_t x, const std::uint32_t y, rgb::RGB &color) const noexcept
+  bmp&
+  setRGB(const std::uint32_t x, const std::uint32_t y, const rgb::RGB &color) noexcept
   {
 //    if (!inBounds(y, x))
 //    {
 //      return;
 //    }
 
-    data_[static_cast<size_t>(y) * static_cast<size_t>(width_) + static_cast<size_t>(x)] = color;
-    //data_[y * width_ + x] = color;
+    data_[y * width_ + x] = color;
+    return *this;
+  }
+
+  bmp&
+  setRGB(const size_t x, const size_t y, const rgb::RGB &color) noexcept
+  {
+//    if (!inBounds(y, x))
+//    {
+//      return;
+//    }
+
+    data_[y * width_ + x] = color;
+    return *this;
+  }
+
+  bmp&
+  setRGB(const std::uint32_t x, const std::uint32_t y, const u_char r, const u_char g, const u_char b) noexcept
+  {
+    data_[y * width_ + x] = rgb::RGB(r, g, b);
+    return *this;
+  }
+
+  bmp&
+  setRGB(const size_t index, const u_char r, const u_char g, const u_char b) noexcept
+  {
+    data_[index] = rgb::RGB(r, g, b);
+    return *this;
   }
 
   constexpr
@@ -124,22 +150,22 @@ public:
     const std::uint32_t bmpsize {static_cast<uint32_t>(rowSize * height_)};
     const BMPHeader header =
             {
-                    0x4d42,
-                    static_cast<std::uint32_t>(bmpsize + sizeof(BMPHeader)),
-                    0,
-                    0,
-                    sizeof(BMPHeader),
-                    40,
-                    width_,
-                    height_,
-                    1,
-                    24,
-                    0,
-                    bmpsize,
-                    0,
-                    0,
-                    0,
-                    0
+              0x4d42,
+              static_cast<std::uint32_t>(bmpsize + sizeof(BMPHeader)),
+              0,
+              0,
+              sizeof(BMPHeader),
+              40,
+              width_,
+              height_,
+              1,
+              24,
+              0,
+              bmpsize,
+              0,
+              0,
+              0,
+              0
             };
 
     if (std::ofstream ofs {path, std::ios_base::binary})
@@ -147,6 +173,7 @@ public:
       ofs.write(reinterpret_cast<const char*>(&header), sizeof(header));
 
       std::vector<std::uint8_t> line(static_cast<size_t>(rowSize));
+      rgb::RGB&& color {0,0,0};
 
       for (std::int32_t y = static_cast<std::int32_t>(height_) - 1; (-1) < y; --y)
       {
@@ -154,8 +181,8 @@ public:
 
         for (std::uint32_t x {0}; x < width_; ++x)
         {
-          const rgb::RGB& color{data_[static_cast<size_t>(y) * static_cast<size_t>(width_) + static_cast<size_t>(x)]};
-          //const rgb::RGB& color{data_[y * width_ + x]};
+          color = data_[static_cast<size_t>(y) * width_ + x];
+          //const rgb::RGB& color{data_[static_cast<size_t>(y) * width_ + x]};
 
           line[pos++] = color.Blue();
           line[pos++] = color.Green();
