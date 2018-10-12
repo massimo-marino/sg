@@ -7,7 +7,9 @@
 ////////////////////////////////////////////////////////////////////////////////
 int main()
 {
-  bmpTest::testBMP();
+  rgbTest::testRGB();
+  rgbTest::testhsv2rgb();
+  rgbTest::testrgb2hsv();
 
   // simple palette creations
   paletteTest::testPalette_1();
@@ -19,9 +21,7 @@ int main()
   // color map image in bmp, ppm files
   paletteTest::testPalette_4();
 
-  rgbTest::testhsv2rgb();
-  rgbTest::testrgb2hsv();
-  rgbTest::testRGB();
+  bmpTest::testBMP();
 
   perlinDemo00();
   perlinDemo01();

@@ -65,6 +65,7 @@ static_assert(sizeof(BMPHeader) == 54);
 
 using bmp_t = std::vector<rgb::RGB>;
 
+#pragma pack (push, 1)
 class bmp final
 {
 private:
@@ -73,6 +74,7 @@ private:
 
   std::uint32_t width_ {0};
   std::uint32_t height_ {0};
+  std::uint32_t size_ {0};
 
 //  constexpr
 //  bool
@@ -88,8 +90,11 @@ public:
   bmp(const std::uint32_t width, const std::uint32_t height) noexcept :
           data_(static_cast<size_t>(width * height)),
           width_(width),
-          height_(height)
-  {}
+          height_(height),
+          size_(width * height)
+  {
+    data_.reserve(size_);
+  }
 
   bmp&
   setRGB(const std::uint32_t x, const std::uint32_t y, const rgb::RGB &color) noexcept
@@ -129,6 +134,20 @@ public:
     return *this;
   }
 
+  template <typename X = size_t, typename Y = size_t>
+  rgb::RGB
+  getRGB(const X x, const Y y) const noexcept
+  {
+    return data_[static_cast<size_t>(y) * width_ + static_cast<size_t>(x)];
+  }
+
+  template <typename T = size_t>
+  rgb::RGB
+  getRGB(const T index) const noexcept
+  {
+    return data_[static_cast<size_t>(index)];
+  }
+
   constexpr
   uint32_t
   width() const noexcept
@@ -146,7 +165,7 @@ public:
   bool
   write(const std::string &path) const noexcept(false)
   {
-    const std::uint32_t rowSize = width_ * 3 + width_ % 4;
+    const std::uint32_t rowSize {width_ * 3 + width_ % 4};
     const std::uint32_t bmpsize {static_cast<uint32_t>(rowSize * height_)};
     const BMPHeader header =
             {
@@ -177,12 +196,11 @@ public:
 
       for (std::int32_t y {static_cast<std::int32_t>(height_) - 1}; (-1) < y; --y)
       {
-        size_t pos{0};
+        size_t pos {0};
 
         for (std::uint32_t x {0}; x < width_; ++x)
         {
-          color = data_[static_cast<size_t>(y) * width_ + x];
-          //const rgb::RGB& color{data_[static_cast<size_t>(y) * width_ + x]};
+          color = getRGB(x, y);
 
           line[pos++] = color.Blue();
           line[pos++] = color.Green();
@@ -195,10 +213,13 @@ public:
     }
     else
     {
+      // error trying to open the file
       return false;
     }
   }
 };  // class bmp
+
+#pragma pack (pop)
 
 }  // namespace bmp
 

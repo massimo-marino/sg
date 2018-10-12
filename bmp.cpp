@@ -18,23 +18,23 @@ testBMP()
   bmp::bmp image(width, height);
   rgb::RGB color {};
 
-  for (size_t y{0}; y < image.height(); ++y)
+  for (size_t y {0}; y < image.height(); ++y)
   {
-    for (size_t x{0}; x < image.width(); ++x)
+    for (size_t x {0}; x < image.width(); ++x)
     {
       image.setRGB(x, y, color.setRGB(x, y, 128));
     }
   }
 
-  std::string fname{"../images/image.bmp"};
+  std::string fname {"../images/4-stacked-images.bmp"};
 
   if ( image.write(fname) )
   {
-    std::cout << "...saved \"" << fname << "\"\n";
+    std::cout << "...saved '" << fname << "'\n";
   }
   else
   {
-    std::cout << "...failed\n";
+    std::cerr << "...failed\n";
   }
 }  // testBMP
 

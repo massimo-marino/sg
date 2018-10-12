@@ -34,30 +34,30 @@ public:
   // create a PPM object and fill it with data stored in fname
   ppm(const std::string &fname);
 
-  void setR(size_t index, u_char r) const noexcept;
-  void setR(size_t x, size_t y, u_char r) const noexcept;
+  ppm& setR(size_t index, u_char r) noexcept;
+  ppm& setR(size_t x, size_t y, u_char r) noexcept;
 
-  void setG(size_t index, u_char g) const noexcept;
-  void setG(size_t x, size_t y, u_char g) const noexcept;
+  ppm& setG(size_t index, u_char g) noexcept;
+  ppm& setG(size_t x, size_t y, u_char g) noexcept;
 
-  void setB(size_t index, u_char b) const noexcept;
-  void setB(size_t x, size_t y, u_char b) const noexcept;
+  ppm& setB(size_t index, u_char b) noexcept;
+  ppm& setB(size_t x, size_t y, u_char b) noexcept;
 
-  void setRGB(size_t index,
+  ppm& setRGB(size_t index,
               u_char r,
               u_char g,
-              u_char b) const noexcept;
-  void setRGB(size_t x,
+              u_char b) noexcept;
+  ppm& setRGB(size_t x,
               size_t y,
               u_char r,
               u_char g,
-              u_char b) const noexcept;
+              u_char b) noexcept;
 
   // read a PPM image from fname
-  void read(const std::string &fname) const noexcept(false);
+  bool read(const std::string &fname) const noexcept(false);
 
   // write a PPM image in fname
-  void write(const std::string &fname) const noexcept(false);
+  bool write(const std::string &fname) const noexcept(false);
 };  // class ppm
 
 #pragma pack (pop)

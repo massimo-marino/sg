@@ -60,7 +60,7 @@ private:
   // load a palette from a text file where each line is of this format:
   // #rrggbb\n
   // where r, g, b characters are hex digits
-  // this file is generated for instance from GIMP 2.8 in: ~/.gimp-2.8/palettes
+  // a palette file is generated for instance from GIMP 2.8 in: ~/.gimp-2.8/palettes/
   bool
   loadHexPaletteFromFile(const std::string &fname) const noexcept(false)
   {
@@ -188,14 +188,13 @@ public:
     return *this;
   }  // shufflePalette
 
-  void
+  bool
   savePalettes(const std::string& rgbPalettefname = "", const std::string& hsbPalettefname = "") const noexcept(false)
   {
-    saveRGBPalette(rgbPalettefname);
-    saveHSBPalette(hsbPalettefname);
+    return saveRGBPalette(rgbPalettefname) | saveHSBPalette(hsbPalettefname);
   }
 
-  void
+  bool
   saveHSBPalette(const std::string& fname = "") const noexcept(false)
   {
     const std::string mode {"hsb"};
@@ -222,12 +221,13 @@ public:
     {
       std::cerr << "Error: Unable to open file "
                 << fname
-                << std::endl;
+                << "\n";
+      return false;
     }
-    outf.close();
+    return true;
   }  // saveHSBPalette
 
-  void
+  bool
   saveRGBPalette(const std::string& fname = "") const noexcept(false)
   {
     const std::string mode {"rgb"};
@@ -247,15 +247,16 @@ public:
     {
       std::cerr << "Error: Unable to open file "
                 << fname
-                << std::endl;
+                << "\n";
+      return false;
     }
-    outf.close();
+    return true;
   }  // saveRGBPalette
 
   // make a color map image in a .bmp/.ppm file
   // T ::= bmp::bmp | ppm::ppm
   template <typename T>
-  void
+  bool
   makePaletteImage(const std::string& fname = "") const noexcept(false)
   {
     // Define the size_ of the image in pixels
@@ -315,7 +316,7 @@ public:
     const std::string paletteFileName {fname + "palette-" + std::to_string(numColors_) + fileExtension};
 
     // Save the image in a binary BMP/PPM file
-    image.write(paletteFileName);
+    return image.write(paletteFileName);
   }  // makePaletteImage
 
 };  // class Palette
