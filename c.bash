@@ -1,8 +1,8 @@
 #!/bin/bash
 clang++ -std=c++17 \
         -stdlib=libc++ \
-        -Ofast -ffast-math -stdlib=libc++ -pedantic-errors \
-        -Wall -Weffc++ -Wextra -Wfatal-errors -Weverything \
+        -Ofast -ffast-math \
+        -pedantic-errors -Wall -Weffc++ -Wextra -Wfatal-errors -Weverything \
         -Wno-c++98-compat -Wno-c++98-compat-pedantic \
         -fno-assume-sane-operator-new \
         -pthread \
