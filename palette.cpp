@@ -16,8 +16,7 @@ std::ostream& operator<<(std::ostream &os, const palette::Palette& p)
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-namespace paletteTest
-{
+namespace paletteTest {
 
 [[maybe_unused]]
 void testPalette_1()

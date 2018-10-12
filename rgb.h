@@ -10,8 +10,8 @@
 #include <iostream>
 #include <cmath>
 ////////////////////////////////////////////////////////////////////////////////
-namespace rgb
-{
+namespace rgb {
+
 // 0xAARRGGBB -> AA alpha, RR red, GG green, BB blue
 // alpha not used in class RGB, set to 0x00 by default
 using RGB_t = uint32_t;
@@ -79,6 +79,28 @@ public:
   rgb() const noexcept
   {
     return rgbHex_;
+  }
+
+  template <typename R = u_char>
+  RGB&
+  setR(const R _r) noexcept
+  {
+    rgbHex_ = rgbHex_ | static_cast<RGB_t>(static_cast<u_char>(_r) << 16);
+    return *this;
+  }
+  template <typename G = u_char>
+  RGB&
+  setG(const G _g) noexcept
+  {
+    rgbHex_ = rgbHex_ | static_cast<RGB_t>(static_cast<u_char>(_g) << 8);
+    return *this;
+  }
+  template <typename B = u_char>
+  RGB&
+  setB(const B _b) noexcept
+  {
+    rgbHex_ = rgbHex_ | static_cast<RGB_t>(static_cast<u_char>(_b));
+    return *this;
   }
 
   template <typename R = u_char, typename G = u_char, typename B = u_char>
@@ -154,7 +176,7 @@ public:
   //
   void rgb2hsv(float& hue, float& saturation, float& brightness) const noexcept
   {
-    float K = 0.0f;
+    float K {0.0f};
     float r {Red() / 255.0f};
     float g {Green() / 255.0f};
     float b {Blue() / 255.0f};
@@ -184,6 +206,7 @@ public:
 
 private:
 
+  static const RGB_t ALPHAMASK_ {0xFF000000};
   static const RGB_t REDMASK_   {0x00FF0000};
   static const RGB_t GREENMASK_ {0x0000FF00};
   static const RGB_t BLUEMASK_  {0x000000FF};
@@ -193,11 +216,12 @@ private:
 
 } // namespace rgb
 
-namespace rgbTest
-{
-  [[maybe_unused]] void testRGB();
-  [[maybe_unused]] void testhsv2rgb();
-  [[maybe_unused]] void testrgb2hsv();
-}
+namespace rgbTest {
+
+[[maybe_unused]] void testRGB();
+[[maybe_unused]] void testhsv2rgb();
+[[maybe_unused]] void testrgb2hsv();
+
+}  // namespace rgbTest
 
 std::ostream& operator<<(std::ostream &os, const rgb::RGB& rgb);

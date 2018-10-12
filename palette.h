@@ -15,8 +15,8 @@
 #include <vector>
 #include <type_traits>
 ////////////////////////////////////////////////////////////////////////////////
-namespace palette
-{
+namespace palette {
+
 using rgbPalette_t = std::vector<rgb::RGB>;
 
 #pragma pack (push, 1)
@@ -323,12 +323,13 @@ public:
 
 }  // namespace palette
 
-namespace paletteTest
-{
+namespace paletteTest {
+
 [[maybe_unused]] void testPalette_1();
 [[maybe_unused]] void testPalette_2();
 [[maybe_unused]] void testPalette_3();
 [[maybe_unused]] void testPalette_4();
-}
+
+}  // namespace paletteTest
 
 std::ostream& operator<<(std::ostream &os, const  palette::Palette& p);

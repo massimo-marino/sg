@@ -8,8 +8,8 @@
 
 #include <random>
 ////////////////////////////////////////////////////////////////////////////////
-namespace utilities
-{
+namespace utilities {
+
 // Seed a random number engine with greater unpredictability.
 //
 // A pseudo-random number engine is initialized with a seed, which
@@ -86,4 +86,5 @@ getRandomINT(const T min, const T max) noexcept
 
   return dis(gen);
 }
+
 }  // namespace utilities

@@ -14,78 +14,58 @@ namespace ppm {
 ppm::ppm() : width_(0), height_(0), max_col_val_(255) {}
 
 // create a PPM object and fill it with data stored in fname
-ppm::ppm(const std::string &fname) : width_(0), height_(0), max_col_val_(255) {
+ppm::ppm(const std::string &fname) : width_(0), height_(0), max_col_val_(255), data_(0) {
   read(fname);
 }
 
-// create an "empty" PPM image with a given width_ and height_;the r_, g_, b_ arrays are filled with zeros
-ppm::ppm(const unsigned int _width, const unsigned int _height) {
-  init(_width, _height);
-  nr_lines_ = height_;
-  nr_columns_ = width_;
-  size_ = width_ * height_;
-
-  // fill r_, g_ and b_ with 0
-  r_.resize(size_);
-  g_.resize(size_);
-  b_.resize(size_);
-}
-
-// init with default values
-void
-ppm::init(const unsigned int width, unsigned int height, unsigned int max_col_val) const noexcept {
-  width_ = width;
-  height_ = height;
-  max_col_val_ = max_col_val;
+// create an "empty" PPM image with a given width_ and height_; data_ is filled with zeros
+ppm::ppm(const unsigned int _width, const unsigned int _height, unsigned int _max_col_val) :
+        width_(_width),
+        height_(_height),
+        max_col_val_(_max_col_val),
+        data_(static_cast<size_t>(_width * _height)),
+        size_(_width * _height)
+{
+  data_.reserve(size_);
 }
 
 void
 ppm::setR(const size_t index, const u_char r) const noexcept {
-  r_[index] = r;
+  data_[index].setR(r);
 }
-
 void
 ppm::setR(const size_t x, size_t y, const u_char r) const noexcept {
-  r_[x + y * width_] = r;
+  data_[x + y * width_].setR(r);
 }
 
 void
 ppm::setG(const size_t index, const u_char g) const noexcept {
-  g_[index] = g;
+  data_[index].setG(g);
 }
-
 void
 ppm::setG(const size_t x, size_t y, const u_char g) const noexcept {
-  g_[x + y * width_] = g;
+  data_[x + y * width_].setG(g);
 }
 
 void
 ppm::setB(const size_t index, const u_char b) const noexcept {
-  b_[index] = b;
+  data_[index].setB(b);
 }
-
 void
 ppm::setB(const size_t x, size_t y, const u_char b) const noexcept {
-  b_[x + y * width_] = b;
+  data_[x + y * width_].setB(b);
 }
 
 void
 ppm::setRGB(const size_t index, const u_char r, const u_char g, const u_char b) const noexcept {
-  r_[index] = r;
-  g_[index] = g;
-  b_[index] = b;
+  data_[index].setRGB(r, g, b);
 }
-
 void
 ppm::setRGB(const size_t x, const size_t y, const u_char r, const u_char g, const u_char b) const noexcept {
-  auto index{x + y * width_};
-
-  r_[index] = r;
-  g_[index] = g;
-  b_[index] = b;
+  data_[x + y * width_].setRGB(r, g, b);
 }
 
-// read the PPM image from fname
+// read a PPM image from fname
 void
 ppm::read(const std::string &fname) const noexcept(false) {
   std::ifstream inf(fname.c_str(), std::ios::in | std::ios::binary);
@@ -108,8 +88,6 @@ ppm::read(const std::string &fname) const noexcept(false) {
     try {
       dimensions >> width_;
       dimensions >> height_;
-      nr_lines_ = height_;
-      nr_columns_ = width_;
     }
     catch (std::exception &e) {
       std::cerr << "Header file format error. "
@@ -129,15 +107,14 @@ ppm::read(const std::string &fname) const noexcept(false) {
     }
 
     size_ = width_ * height_;
-
-    r_.reserve(size_);
-    g_.reserve(size_);
-    b_.reserve(size_);
+    data_.clear();
+    data_.resize(size_);
+    data_.reserve(size_);
 
     for (unsigned int i{0}; i < size_; ++i) {
-      r_[i] = static_cast<u_char>(inf.get());
-      g_[i] = static_cast<u_char>(inf.get());
-      b_[i] = static_cast<u_char>(inf.get());
+      data_[i].setRGB(static_cast<u_char>(inf.get()),
+                      static_cast<u_char>(inf.get()),
+                      static_cast<u_char>(inf.get()));
     }
   } else {
     std::cerr << "Error: Unable to open file "
@@ -145,9 +122,9 @@ ppm::read(const std::string &fname) const noexcept(false) {
               << std::endl;
   }
   inf.close();
-}
+}  // read
 
-// write the PPM image in fname
+// write a PPM image in fname
 void
 ppm::write(const std::string &fname) const noexcept(false) {
   std::ofstream outf(fname.c_str(), std::ios::out | std::ios::binary);
@@ -156,7 +133,7 @@ ppm::write(const std::string &fname) const noexcept(false) {
     outf << "P6\n" << width_ << " " << height_ << "\n" << max_col_val_ << "\n";
 
     for (unsigned int i{0}; i < size_; ++i) {
-      outf << r_[i] << g_[i] << b_[i];
+      outf << data_[i].Red() << data_[i].Green() << data_[i].Blue();
     }
   } else {
     std::cerr << "Error: Unable to open file "
@@ -164,6 +141,6 @@ ppm::write(const std::string &fname) const noexcept(false) {
               << std::endl;
   }
   outf.close();
-}
+}  // write
 
 } // namespace ppm

@@ -37,8 +37,8 @@
 #include <iostream>
 #include <fstream>
 ////////////////////////////////////////////////////////////////////////////////
-namespace bmp
-{
+namespace bmp {
+
 #pragma pack (push, 1)
 struct BMPHeader
 {
@@ -99,7 +99,7 @@ public:
 //      return;
 //    }
 
-    data_[y * width_ + x] = color;
+    data_[y * width_ + x].setRGB(color);
     return *this;
   }
 
@@ -111,21 +111,21 @@ public:
 //      return;
 //    }
 
-    data_[y * width_ + x] = color;
+    data_[y * width_ + x].setRGB(color);
     return *this;
   }
 
   bmp&
   setRGB(const std::uint32_t x, const std::uint32_t y, const u_char r, const u_char g, const u_char b) noexcept
   {
-    data_[y * width_ + x] = rgb::RGB(r, g, b);
+    data_[y * width_ + x].setRGB(r, g, b);
     return *this;
   }
 
   bmp&
   setRGB(const size_t index, const u_char r, const u_char g, const u_char b) noexcept
   {
-    data_[index] = rgb::RGB(r, g, b);
+    data_[index].setRGB(r, g, b);
     return *this;
   }
 
@@ -175,7 +175,7 @@ public:
       std::vector<std::uint8_t> line(static_cast<size_t>(rowSize));
       rgb::RGB&& color {0,0,0};
 
-      for (std::int32_t y = static_cast<std::int32_t>(height_) - 1; (-1) < y; --y)
+      for (std::int32_t y {static_cast<std::int32_t>(height_) - 1}; (-1) < y; --y)
       {
         size_t pos{0};
 
@@ -202,7 +202,8 @@ public:
 
 }  // namespace bmp
 
-namespace bmpTest
-{
+namespace bmpTest {
+
 [[maybe_unused]] void testBMP();
+
 }  // namespace bmpTest

@@ -19,9 +19,9 @@ int main()
   // color map image in bmp, ppm files
   paletteTest::testPalette_4();
 
-//  rgbTest::testhsv2rgb();
-//  rgbTest::testrgb2hsv();
-//  rgbTest::testRGB();
+  rgbTest::testhsv2rgb();
+  rgbTest::testrgb2hsv();
+  rgbTest::testRGB();
 
   perlinDemo00();
   perlinDemo01();

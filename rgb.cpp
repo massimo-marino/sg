@@ -13,8 +13,7 @@ std::ostream& operator<<(std::ostream &os, const rgb::RGB& rgb)
             << static_cast<uint16_t>(rgb.Blue());
 }
 
-namespace rgbTest
-{
+namespace rgbTest {
 
 [[maybe_unused]]
 void
@@ -83,11 +82,11 @@ testhsv2rgb()
 void
 testrgb2hsv()
 {
-  const rgb::RGB BLACK{0, 0, 0};
-  const rgb::RGB WHITE{255, 255, 255};
-  const rgb::RGB RED{255, 0, 0};
-  const rgb::RGB GREEN{0, 255, 0};
-  const rgb::RGB BLUE{0, 0, 255};
+  const rgb::RGB BLACK {0,   0,   0};
+  const rgb::RGB WHITE {255, 255, 255};
+  const rgb::RGB RED   {255, 0,   0};
+  const rgb::RGB GREEN {0,   255, 0};
+  const rgb::RGB BLUE  {0,   0,   255};
 
   float hue {};
   float saturation {};
