@@ -212,7 +212,10 @@ private:
   static const RGB_t BLUEMASK_  {0x000000FF};
 
   mutable RGB_t rgbHex_{};
+  
 };  // class RGB
+
+using pixels_t = std::vector<rgb::RGB>;
 
 } // namespace rgb
 

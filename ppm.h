@@ -11,25 +11,25 @@
 ////////////////////////////////////////////////////////////////////////////////
 namespace ppm {
 
-#pragma pack (push, 1)
+using pixels_t = rgb::pixels_t;
 
-using ppm_t = std::vector<rgb::RGB>;
+#pragma pack (push, 1)
 
 class ppm final {
 private:
-  mutable unsigned int width_ {0};
-  mutable unsigned int height_ {0};
-  mutable unsigned int max_col_val_ {255};
-  mutable ppm_t data_ {};
+  mutable uint32_t width_ {0};
+  mutable uint32_t height_ {0};
+  mutable uint32_t max_col_val_ {255};
+  mutable pixels_t data_ {};
   // total number of elements (pixels)
-  mutable unsigned int size_ {};
+  mutable uint32_t size_ {};
 
 public:
   ppm();
 
   // create an "epmty" PPM image with a given width_ and height_;
   // data_ is filled with zeros
-  ppm(unsigned int _width, unsigned int _height, unsigned int _max_col_val = 255);
+  ppm(uint32_t _width, uint32_t _height, uint32_t _max_col_val = 255);
 
   // create a PPM object and fill it with data stored in fname
   ppm(const std::string &fname);
@@ -52,6 +52,18 @@ public:
               u_char r,
               u_char g,
               u_char b) noexcept;
+
+  rgb::RGB&
+  getRGB(const size_t x, const size_t y) const noexcept
+  {
+    return data_[y * width_ + x];
+  }
+
+  rgb::RGB&
+  getRGB(const size_t index) const noexcept
+  {
+    return data_[index];
+  }
 
   // read a PPM image from fname
   bool read(const std::string &fname) const noexcept(false);

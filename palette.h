@@ -17,7 +17,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 namespace palette {
 
-using rgbPalette_t = std::vector<rgb::RGB>;
+using pixels_t = rgb::pixels_t;
 
 #pragma pack (push, 1)
 class Palette final
@@ -30,7 +30,7 @@ private:
   mutable uint32_t numColors_ {numColorsDefault_};
   mutable float saturation_ {numColorsDefault_};
   mutable float brightness_ {numColorsDefault_};
-  mutable rgbPalette_t rgbPalette_ {};
+  mutable pixels_t rgbPalette_ {};
 
   // saturation, brightness in [0,1]
   // hue in [0,360]
@@ -130,14 +130,14 @@ public:
 
   // default copy ctor
   // usage:
-  // rgbPalette_ obj{};
-  // rgbPalette_ copiedObj{obj};
+  // Palette obj{};
+  // Palette copiedObj{obj};
   Palette(const Palette &rhs) = default;
 
   // default copy assignment
   // usage:
-  // rgbPalette_ obj{};
-  // rgbPalette_ copiedObj;
+  // Palette obj{};
+  // Palette copiedObj;
   // copiedObj = obj;
   Palette&
   operator=(const Palette &rhs) = default;
@@ -157,18 +157,18 @@ public:
   Palette&
   operator=(Palette &&rhs) = default;
 
-  rgbPalette_t
+  pixels_t
   operator()() const noexcept
   {
     return rgbPalette_;
   }
 
-  operator rgbPalette_t() const noexcept
+  operator pixels_t() const noexcept
   {
     return rgbPalette_;
   }
 
-  rgbPalette_t
+  pixels_t
   rgbPalette() const noexcept
   {
     return rgbPalette_;

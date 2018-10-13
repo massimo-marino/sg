@@ -14,7 +14,7 @@ namespace ppm {
 ppm::ppm() : width_(0), height_(0), max_col_val_(255) {}
 
 // create an "empty" PPM image with a given width_ and height_; data_ is filled with zeros
-ppm::ppm(const unsigned int _width, const unsigned int _height, unsigned int _max_col_val) :
+ppm::ppm(const uint32_t _width, const uint32_t _height, uint32_t _max_col_val) :
         width_(_width),
         height_(_height),
         max_col_val_(_max_col_val),
@@ -122,7 +122,7 @@ ppm::read(const std::string &fname) const noexcept(false) {
     data_.resize(size_);
     data_.reserve(size_);
 
-    for (unsigned int i{0}; i < size_; ++i) {
+    for (size_t i{0}; i < size_; ++i) {
       data_[i].setRGB(static_cast<u_char>(inf.get()),
                       static_cast<u_char>(inf.get()),
                       static_cast<u_char>(inf.get()));
@@ -144,7 +144,7 @@ ppm::write(const std::string &fname) const noexcept(false) {
   if (outf.is_open()) {
     outf << "P6\n" << width_ << " " << height_ << "\n" << max_col_val_ << "\n";
 
-    for (unsigned int i{0}; i < size_; ++i) {
+    for (size_t i{0}; i < size_; ++i) {
       outf << data_[i].Red() << data_[i].Green() << data_[i].Blue();
     }
   } else {

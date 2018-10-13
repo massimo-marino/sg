@@ -39,42 +39,49 @@
 ////////////////////////////////////////////////////////////////////////////////
 namespace bmp {
 
-#pragma pack (push, 1)
-struct BMPHeader
-{
-  std::uint16_t bfType;
-  std::uint32_t bfSize;
-  std::uint16_t bfReserved1;
-  std::uint16_t bfReserved2;
-  std::uint32_t bfOffBits;
-  std::uint32_t biSize;
-  std::uint32_t biWidth;
-  std::uint32_t biHeight;
-  std::uint16_t biPlanes;
-  std::uint16_t biBitCount;
-  std::uint32_t biCompression;
-  std::uint32_t biSizeImage;
-  std::int32_t biXPelsPerMeter;
-  std::int32_t biYPelsPerMeter;
-  std::uint32_t biClrUsed;
-  std::uint32_t biClrImportant;
-};
-
-static_assert(sizeof(BMPHeader) == 54);
-#pragma pack (pop)
-
-using bmp_t = std::vector<rgb::RGB>;
+using pixels_t = rgb::pixels_t;
 
 #pragma pack (push, 1)
 class bmp final
 {
 private:
 
-  mutable bmp_t data_ {};
+  mutable pixels_t data_ {};
 
   std::uint32_t width_ {0};
   std::uint32_t height_ {0};
   std::uint32_t size_ {0};
+
+  struct BMPHeader
+  {
+    BMPHeader(const std::uint32_t _bfSize,
+              const std::uint32_t _biWidth,
+              const std::uint32_t _biHeight,
+              const std::uint32_t _biSizeImage) :
+            bfSize(_bfSize),
+            biWidth(_biWidth),
+            biHeight(_biHeight),
+            biSizeImage(_biSizeImage)
+    {}
+
+    std::uint16_t bfType {0x4d42};  // "BM"
+    std::uint32_t bfSize {};
+    std::uint16_t bfReserved1 {0};
+    std::uint16_t bfReserved2 {0};
+    std::uint32_t bfOffBits {sizeof(BMPHeader)};
+    std::uint32_t biSize {40};
+    std::uint32_t biWidth {};
+    std::uint32_t biHeight {};
+    std::uint16_t biPlanes {1};
+    std::uint16_t biBitCount {24};
+    std::uint32_t biCompression {0};
+    std::uint32_t biSizeImage {};
+    std::int32_t  biXPelsPerMeter {0};
+    std::int32_t  biYPelsPerMeter {0};
+    std::uint32_t biClrUsed {0};
+    std::uint32_t biClrImportant {0};
+  };  // struct BMPHeader
+  static_assert(sizeof(BMPHeader) == 54);
 
 //  constexpr
 //  bool
@@ -96,53 +103,47 @@ public:
     data_.reserve(size_);
   }
 
+  template <typename X = uint32_t, typename Y = uint32_t>
   bmp&
-  setRGB(const std::uint32_t x, const std::uint32_t y, const rgb::RGB &color) noexcept
+  setRGB(const X x, const Y y, const rgb::RGB &color) noexcept
   {
-//    if (!inBounds(y, x))
-//    {
-//      return;
-//    }
-
-    data_[y * width_ + x].setRGB(color);
+    data_[static_cast<size_t>(y) * width_ + static_cast<size_t>(x)].setRGB(color);
     return *this;
   }
 
+  template <typename T = uint32_t>
   bmp&
-  setRGB(const size_t x, const size_t y, const rgb::RGB &color) noexcept
+  setRGB(const T index, const rgb::RGB &color) noexcept
   {
-//    if (!inBounds(y, x))
-//    {
-//      return;
-//    }
-
-    data_[y * width_ + x].setRGB(color);
+    data_[static_cast<size_t>(index)].setRGB(color);
     return *this;
   }
 
+  template <typename X = uint32_t, typename Y = uint32_t>
   bmp&
-  setRGB(const std::uint32_t x, const std::uint32_t y, const u_char r, const u_char g, const u_char b) noexcept
+  setRGB(const X x, const Y y, const u_char r, const u_char g, const u_char b) noexcept
   {
-    data_[y * width_ + x].setRGB(r, g, b);
+    data_[static_cast<size_t>(y) * width_ + static_cast<size_t>(x)].setRGB(r, g, b);
     return *this;
   }
 
+  template <typename T = uint32_t>
   bmp&
-  setRGB(const size_t index, const u_char r, const u_char g, const u_char b) noexcept
+  setRGB(const T index, const u_char r, const u_char g, const u_char b) noexcept
   {
-    data_[index].setRGB(r, g, b);
+    data_[static_cast<size_t>(index)].setRGB(r, g, b);
     return *this;
   }
 
-  template <typename X = size_t, typename Y = size_t>
-  rgb::RGB
+  template <typename X = uint32_t, typename Y = uint32_t>
+  rgb::RGB&
   getRGB(const X x, const Y y) const noexcept
   {
     return data_[static_cast<size_t>(y) * width_ + static_cast<size_t>(x)];
   }
 
-  template <typename T = size_t>
-  rgb::RGB
+  template <typename T = uint32_t>
+  rgb::RGB&
   getRGB(const T index) const noexcept
   {
     return data_[static_cast<size_t>(index)];
@@ -167,25 +168,10 @@ public:
   {
     const std::uint32_t rowSize {width_ * 3 + width_ % 4};
     const std::uint32_t bmpsize {static_cast<uint32_t>(rowSize * height_)};
-    const BMPHeader header =
-            {
-              0x4d42,
-              static_cast<std::uint32_t>(bmpsize + sizeof(BMPHeader)),
-              0,
-              0,
-              sizeof(BMPHeader),
-              40,
-              width_,
-              height_,
-              1,
-              24,
-              0,
-              bmpsize,
-              0,
-              0,
-              0,
-              0
-            };
+    const BMPHeader header(static_cast<std::uint32_t>(bmpsize + sizeof(BMPHeader)),
+                           width_,
+                           height_,
+                           bmpsize);
 
     if (std::ofstream ofs {path, std::ios_base::binary})
     {
