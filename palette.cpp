@@ -6,7 +6,7 @@
 #include "palette.h"
 ////////////////////////////////////////////////////////////////////////////////
 
-std::ostream& operator<<(std::ostream &os, const palette::Palette& p)
+std::ostream& operator<<(std::ostream &os, const sg::palette::Palette& p)
 {
   for (auto&& c : p())
   {
@@ -16,7 +16,7 @@ std::ostream& operator<<(std::ostream &os, const palette::Palette& p)
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-namespace paletteTest {
+namespace sg::paletteTest {
 
 [[maybe_unused]]
 void testPalette_1()
@@ -63,8 +63,8 @@ void testPalette_3()
   {
     palette::Palette p {nc};
 
-    p.makePaletteImage<ppm::ppm>("../palettes/");
-    p.makePaletteImage<bmp::bmp>("../palettes/");
+    p.makePaletteImage<sg::ppm>("../palettes/");
+    p.makePaletteImage<sg::bmp>("../palettes/");
     //p.shufflePalette().makePaletteImage<ppm::ppm>("../palettes/p-shuffled-");
   }
 }  // testPalette_3
@@ -75,9 +75,9 @@ void testPalette_4()
   palette::Palette p {"../palettes/0330-stage-1.2-palette.txt"};
 
   p.savePalettes("../palettes/", "../palettes/");
-  p.makePaletteImage<ppm::ppm>("../palettes/");
-  p.makePaletteImage<bmp::bmp>("../palettes/");
+  p.makePaletteImage<sg::ppm>("../palettes/");
+  p.makePaletteImage<sg::bmp>("../palettes/");
 
 }  // testPalette_4
 
-}  // namespace PaletteTest
+}  // namespace sg::PaletteTest

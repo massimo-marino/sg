@@ -10,7 +10,7 @@
 #include <iostream>
 #include <cmath>
 ////////////////////////////////////////////////////////////////////////////////
-namespace rgb {
+namespace sg::rgb {
 
 // 0xAARRGGBB -> AA alpha, RR red, GG green, BB blue
 // alpha not used in class RGB, set to 0x00 by default
@@ -34,47 +34,55 @@ public:
   explicit
   RGB(RGB_t _rgb) : rgbHex_(_rgb) {}
 
+  constexpr
   bool
   operator==(const RGB &rhs) const noexcept
   {
     return rhs.rgbHex_ == rgbHex_;
   }
 
+  constexpr
   bool
   operator!=(const RGB &rhs) const noexcept
   {
     return rhs.rgbHex_ != rgbHex_;
   }
 
+  constexpr
   RGB_t
   operator()() const noexcept
   {
     return rgbHex_;
   }
 
+  constexpr
   operator RGB_t() const noexcept
   {
     return rgbHex_;
   }
 
+  constexpr
   u_char
   Red() const noexcept
   {
     return static_cast<u_char>((rgbHex_ & REDMASK_) >> 16);
   }
 
+  constexpr
   u_char
   Green() const noexcept
   {
     return static_cast<u_char>((rgbHex_ & GREENMASK_) >> 8);
   }
 
+  constexpr
   u_char
   Blue() const noexcept
   {
     return static_cast<u_char>(rgbHex_ & BLUEMASK_);
   }
 
+  constexpr
   RGB_t
   rgb() const noexcept
   {
@@ -88,6 +96,7 @@ public:
     rgbHex_ = rgbHex_ | static_cast<RGB_t>(static_cast<u_char>(_r) << 16);
     return *this;
   }
+
   template <typename G = u_char>
   RGB&
   setG(const G _g) noexcept
@@ -95,6 +104,7 @@ public:
     rgbHex_ = rgbHex_ | static_cast<RGB_t>(static_cast<u_char>(_g) << 8);
     return *this;
   }
+
   template <typename B = u_char>
   RGB&
   setB(const B _b) noexcept
@@ -212,19 +222,19 @@ private:
   static const RGB_t BLUEMASK_  {0x000000FF};
 
   mutable RGB_t rgbHex_{};
-  
+
 };  // class RGB
 
 using pixels_t = std::vector<rgb::RGB>;
 
-} // namespace rgb
+} // namespace sg::rgb
 
-namespace rgbTest {
+namespace sg::rgbTest {
 
 [[maybe_unused]] void testRGB();
 [[maybe_unused]] void testhsv2rgb();
 [[maybe_unused]] void testrgb2hsv();
 
-}  // namespace rgbTest
+}  // namespace sg::rgbTest
 
-std::ostream& operator<<(std::ostream &os, const rgb::RGB& rgb);
+std::ostream& operator<<(std::ostream &os, const sg::rgb::RGB& rgb);

@@ -32,8 +32,7 @@ SET (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -stdlib=libc++")
 
 SET (CMAKE_VERBOSE_MAKEFILE on)
 
-SET (SOURCES main.cpp ppm.cpp ppm.h perlinNoise.cpp perlinNoise.h perlinDemos.cpp perlinDemos.h helpers.h rgb.h
-             helpers.cpp rgb.cpp randomNumberGenerators.h palette.cpp palette.h bmp.cpp bmp.h)
+SET (SOURCES main.cpp helpers.cpp rgb.cpp image.cpp palette.cpp perlinNoise.cpp perlinDemos.cpp)
 SET (OBJ_EXECUTABLE sg)
 
 ADD_EXECUTABLE(${OBJ_EXECUTABLE} ${SOURCES})

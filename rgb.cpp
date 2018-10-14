@@ -6,14 +6,14 @@
 #include "rgb.h"
 ////////////////////////////////////////////////////////////////////////////////
 
-std::ostream& operator<<(std::ostream &os, const rgb::RGB& rgb)
+std::ostream& operator<<(std::ostream &os, const sg::rgb::RGB& rgb)
 {
   return os << static_cast<uint16_t>(rgb.Red()) << " "
             << static_cast<uint16_t>(rgb.Green()) << " "
             << static_cast<uint16_t>(rgb.Blue());
 }
 
-namespace rgbTest {
+namespace sg::rgbTest {
 
 [[maybe_unused]]
 void
@@ -118,4 +118,4 @@ testrgb2hsv()
   std::cout << hue << " " << saturation << " " << brightness << std::endl;
 }
 
-}  // namespace rgbTest
+}  // namespace sg::rgbTest

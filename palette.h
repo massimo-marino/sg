@@ -6,20 +6,18 @@
 #pragma once
 
 #include "rgb.h"
+#include "image.h"
 #include "randomNumberGenerators.h"
-#include "ppm.h"
-#include "bmp.h"
 
 #include <fstream>
 #include <cstdint>
 #include <vector>
 #include <type_traits>
 ////////////////////////////////////////////////////////////////////////////////
-namespace palette {
-
-using pixels_t = rgb::pixels_t;
+namespace sg::palette {
 
 #pragma pack (push, 1)
+
 class Palette final
 {
 private:
@@ -163,7 +161,8 @@ public:
     return rgbPalette_;
   }
 
-  operator pixels_t() const noexcept
+  operator
+  pixels_t() const noexcept
   {
     return rgbPalette_;
   }
@@ -182,7 +181,7 @@ public:
     // Initialize a random engine with seed
     std::default_random_engine engine(seed);
 
-    // Shuffle  using the above random engine
+    // Shuffle using the above random engine
     std::shuffle(rgbPalette_.begin(), rgbPalette_.end(), engine);
 
     return *this;
@@ -254,7 +253,7 @@ public:
   }  // saveRGBPalette
 
   // make a color map image in a .bmp/.ppm file
-  // T ::= bmp::bmp | ppm::ppm
+  // T ::= sg::bmp | sg::ppm
   template <typename T>
   bool
   makePaletteImage(const std::string& fname = "") const noexcept(false)
@@ -279,8 +278,8 @@ public:
     {
       bwidth = 50;
     }
-    // bheight: the height of a single color band in the color map
-    // the same of the full image height
+    // bheight: the height of a single color band in the color map,
+    // same value of the full image height
     const unsigned int bheight {100};
     const unsigned int width {bwidth * numColors_};
     const unsigned int height {bheight};
@@ -311,8 +310,8 @@ public:
 
     const std::string bmpExtension {".bmp"};
     const std::string ppmExtension {".ppm"};
-    const std::string fileExtension { ((std::is_same<T, ppm::ppm>::value) ? ppmExtension :
-                                       ((std::is_same<T, bmp::bmp>::value) ? bmpExtension : ".img")) };
+    const std::string fileExtension { ((std::is_same<T, sg::ppm>::value) ? ppmExtension :
+                                       ((std::is_same<T, sg::bmp>::value) ? bmpExtension : ".img")) };
     const std::string paletteFileName {fname + "palette-" + std::to_string(numColors_) + fileExtension};
 
     // Save the image in a binary BMP/PPM file
@@ -320,17 +319,18 @@ public:
   }  // makePaletteImage
 
 };  // class Palette
+
 #pragma pack (pop)
 
-}  // namespace palette
+}  // namespace sg::palette
 
-namespace paletteTest {
+namespace sg::paletteTest {
 
 [[maybe_unused]] void testPalette_1();
 [[maybe_unused]] void testPalette_2();
 [[maybe_unused]] void testPalette_3();
 [[maybe_unused]] void testPalette_4();
 
-}  // namespace paletteTest
+}  // namespace sg::paletteTest
 
-std::ostream& operator<<(std::ostream &os, const  palette::Palette& p);
+std::ostream& operator<<(std::ostream &os, const  sg::palette::Palette& p);
