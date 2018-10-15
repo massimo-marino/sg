@@ -13,6 +13,7 @@ The default compiler used is `clang 7.0.0`.
 
 The cmake files compile with `-std=c++17`.
 
+There is a dependency with `libpng`.
 
 ## Install and Run the Example
 

@@ -11,6 +11,7 @@
 #include <fstream>
 #include <sstream>
 #include <exception>
+#include <png.h>
 ////////////////////////////////////////////////////////////////////////////////
 namespace sg {
 
@@ -108,14 +109,14 @@ public:
   }
 
   image&
-  setRGB(const size_t x, const size_t y, const rgb::RGB &color) noexcept
+  setRGB(const size_t x, const size_t y, const rgb::RGB& color) noexcept
   {
-    data_[y * width_ + x].setRGB(color);
+    data_[x + y * width_].setRGB(color);
     return *this;
   }
 
   image&
-  setRGB(const size_t index, const rgb::RGB &color) noexcept
+  setRGB(const size_t index, const rgb::RGB& color) noexcept
   {
     data_[index].setRGB(color);
     return *this;
@@ -182,6 +183,135 @@ public:
 
 };  // class image
 
+class png final : public image {
+private:
+  unsigned long bpp_ {3};
+
+public:
+  // create a PNG default-sized object
+  png() : image() {}
+
+  // create an "empty" PNG with a given width_ and height_; data_ is filled with zeros
+  png(const uint32_t _width, const uint32_t _height, const unsigned long _bpp = 3) :
+          image(_width, _height),
+          bpp_(_bpp)
+  {}
+
+  ~png();
+
+  bool
+  isPNG(const std::string& fname) const noexcept(false)
+  {
+    std::ifstream inf(fname, std::ios::in | std::ofstream::binary);
+    if ( !inf.is_open() )
+    {
+      return false;
+    }
+
+    const png_size_t numToCheck {64};
+    char header[numToCheck] {};
+
+    inf.read(header, numToCheck);
+
+    int is_png {!png_sig_cmp(reinterpret_cast<png_bytep>(header), static_cast<png_size_t>(0), numToCheck)};
+    if ( !is_png )
+    {
+      return false;
+    }
+    return true;
+  }  // isPNG
+
+  std::vector<unsigned char>
+  write() const noexcept(false)
+  {
+    struct pngimage_t
+    {
+      std::vector <unsigned char> pngData_ {};
+    };
+
+    pngimage_t pngImage;
+    png_infop info_ptr;
+    png_structp png_ptr;
+
+    u_char r {};
+    u_char g {};
+    u_char b {};
+    u_char a {};
+
+    pngImage.pngData_.reserve(data_.size() * bpp_);
+
+    for (const auto& c : data_)
+    {
+      r = c.Red();
+      g = c.Green();
+      b = c.Blue();
+      pngImage.pngData_.emplace_back(r);
+      pngImage.pngData_.emplace_back(g);
+      pngImage.pngData_.emplace_back(b);
+      if ( 4 == bpp_ )
+      {
+        a = c.Alpha();
+        pngImage.pngData_.emplace_back(a);
+      }
+    }
+
+    png_ptr = png_create_write_struct(PNG_LIBPNG_VER_STRING, nullptr, nullptr, nullptr);
+
+    if ( !png_ptr ) {throw std::runtime_error( "png_create_write_struct" ); }
+
+    info_ptr = png_create_info_struct(png_ptr);
+
+    if ( !info_ptr ) {throw std::runtime_error( "png_create_info_struct" ); }
+
+    if ( 3 == bpp_ ) png_set_IHDR(png_ptr, info_ptr, width_, height_,
+                                  8, PNG_COLOR_TYPE_RGB, PNG_INTERLACE_NONE,
+                                  PNG_COMPRESSION_TYPE_DEFAULT, PNG_FILTER_TYPE_DEFAULT);
+    if ( 4 == bpp_ ) png_set_IHDR(png_ptr, info_ptr, width_, height_,
+                                  8, PNG_COLOR_TYPE_RGBA, PNG_INTERLACE_NONE,
+                                  PNG_COMPRESSION_TYPE_DEFAULT, PNG_FILTER_TYPE_DEFAULT);
+
+    // set the zlib compression level
+    png_set_compression_level(png_ptr, Z_BEST_SPEED);
+
+    std::vector<unsigned char> file_content;
+
+    png_set_write_fn(png_ptr, &file_content,
+                     [] (const png_structp _png_ptr, const png_bytep _data, const png_size_t _length)
+                     {
+                       std::vector<unsigned char> &fileContent = *(reinterpret_cast<std::vector<unsigned char>*>(png_get_io_ptr(_png_ptr)));
+                       fileContent.reserve(_length);
+                       for (uint32_t i {0}; i < _length; ++i)
+                       {
+                         fileContent.emplace_back(_data[i]);
+                       }
+                     }, nullptr);
+
+    png_write_info(png_ptr, info_ptr);
+
+    std::vector<png_bytep> row_pointers(height_);
+
+    for (uint32_t y {0}; y < height_; ++y)
+    {
+      row_pointers[y] = &pngImage.pngData_[y * png_get_rowbytes(png_ptr, info_ptr)];
+    }
+    png_write_image(png_ptr, &row_pointers[0]);
+    png_write_end(png_ptr, nullptr);
+    png_destroy_write_struct(&png_ptr, &info_ptr);
+    return file_content;
+  }  // write
+
+  bool
+  write_png_file( const std::string& fname)
+  {
+    std::vector<unsigned char> data_to_write {write()};
+
+    std::ofstream outf(fname, std::ios::out | std::ofstream::binary);
+    std::copy(data_to_write.begin(), data_to_write.end(), std::ostreambuf_iterator<char>(outf));
+
+    return true;
+  }  // write_png_file
+};  // class png
+
 class ppm final : public image {
 private:
   mutable uint32_t max_col_val_ {255};
@@ -198,14 +328,15 @@ public:
 
   ~ppm();
 
-  bool isPPM(const std::string& path) const noexcept(false)
+  bool
+  isPPM(const std::string& fname) const noexcept(false)
   {
-    return checkGraphicFile(path, "P6");
+    return checkGraphicFile(fname, "P6");
   }
 
   // read a PPM image from fname
   bool
-  read(const std::string &fname) const noexcept(false) {
+  read(const std::string& fname) const noexcept(false) {
     std::ifstream ifs(fname.c_str(), std::ios::in | std::ios::binary);
 
     if (ifs.is_open()) {
@@ -252,10 +383,14 @@ public:
       data_.resize(size_);
       data_.reserve(size_);
 
+      char r {};
+      char g {};
+      char b {};
       for (size_t i{0}; i < size_; ++i) {
-        data_[i].setRGB(static_cast<u_char>(ifs.get()),
-                        static_cast<u_char>(ifs.get()),
-                        static_cast<u_char>(ifs.get()));
+        ifs.get(r);
+        ifs.get(g);
+        ifs.get(b);
+        data_[i].setRGB(r, g, b);
       }
     } else {
       std::cerr << "Error: Unable to open file "
@@ -268,7 +403,7 @@ public:
 
   // write a PPM image in fname
   bool
-  write(const std::string &fname) const noexcept(false) {
+  write(const std::string& fname) const noexcept(false) {
     std::ofstream ofs(fname.c_str(), std::ios::out | std::ios::binary);
 
     if (ofs.is_open()) {
@@ -339,13 +474,13 @@ public:
 
   ~bmp();
 
-  bool isBMP(const std::string& path) const noexcept(false)
+  bool isBMP(const std::string& fname) const noexcept(false)
   {
-    return checkGraphicFile(path, "BM");
+    return checkGraphicFile(fname, "BM");
   }
 
   bool
-  write(const std::string &path) const noexcept(false)
+  write(const std::string& fname) const noexcept(false)
   {
     const std::uint32_t rowSize {width_ * 3 + width_ % 4};
     const std::uint32_t bmpsize {static_cast<uint32_t>(rowSize * height_)};
@@ -354,7 +489,7 @@ public:
                            height_,
                            bmpsize);
 
-    if (std::ofstream ofs {path, std::ios_base::binary})
+    if (std::ofstream ofs {fname, std::ios_base::binary})
     {
       ofs.write(reinterpret_cast<const char*>(&header), sizeof(header));
 
@@ -392,6 +527,7 @@ namespace imageTest {
 
 [[maybe_unused]] void testPPM();
 [[maybe_unused]] void testBMP();
+[[maybe_unused]] void testPNG();
 [[maybe_unused]] void testImageFileFormat();
 
 }  // namespace imageTest

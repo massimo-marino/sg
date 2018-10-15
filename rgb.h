@@ -63,6 +63,13 @@ public:
 
   constexpr
   u_char
+  Alpha() const noexcept
+  {
+    return static_cast<u_char>((rgbHex_ & ALPHAMASK_) >> 24);
+  }
+
+  constexpr
+  u_char
   Red() const noexcept
   {
     return static_cast<u_char>((rgbHex_ & REDMASK_) >> 16);
@@ -117,7 +124,7 @@ public:
   RGB&
   setRGB(const R _r, const G _g, const B _b) noexcept
   {
-    rgbHex_ = static_cast<RGB_t>(static_cast<u_char>(_r) << 16 | static_cast<u_char>(_g) << 8 | static_cast<u_char>(_b));
+    rgbHex_ = static_cast<RGB_t>(_r) << 16 | static_cast<RGB_t>(_g) << 8 | static_cast<RGB_t>(_b);
     return *this;
   }
 

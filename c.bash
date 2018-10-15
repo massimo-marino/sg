@@ -10,4 +10,4 @@ clang++ -std=c++17 \
         main.cpp helpers.cpp rgb.cpp image.cpp palette.cpp perlinNoise.cpp perlinDemos.cpp \
         -mtune=native -march=native -m64 \
         -o sg \
-        -lm -lrt
+        -lpng

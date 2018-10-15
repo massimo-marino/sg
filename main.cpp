@@ -5,6 +5,7 @@
 #include "palette.h"
 #include "image.h"
 ////////////////////////////////////////////////////////////////////////////////
+
 int main()
 {
   sg::rgbTest::testRGB();
@@ -23,6 +24,7 @@ int main()
 
   sg::imageTest::testPPM();
   sg::imageTest::testBMP();
+  sg::imageTest::testPNG();
   sg::imageTest::testImageFileFormat();
 
   sg::perlinTest::perlinDemo00();
