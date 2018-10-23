@@ -5,7 +5,6 @@
 //
 #pragma once
 
-#include "rgb.h"
 #include "image.h"
 #include "randomNumberGenerators.h"
 
@@ -65,7 +64,7 @@ private:
     std::ifstream inf(fname, std::ios::in | std::ios::binary);
     if ( !inf.is_open() )
     {
-      return true;
+      return false;
     }
 
     uint32_t numColors {0};
@@ -88,7 +87,7 @@ private:
     std::sort(rgbPalette_.begin(), rgbPalette_.end());
     numColors_ = numColors;
 
-    return false;
+    return true;
   }  // loadHexPaletteFromFile
 
 public:
@@ -188,9 +187,11 @@ public:
   }  // shufflePalette
 
   bool
-  savePalettes(const std::string& rgbPalettefname = "", const std::string& hsbPalettefname = "") const noexcept(false)
+  savePalettes(const std::string& rgbPalettefname = "",
+               const std::string& rgbHexPalettefname = "",
+               const std::string& hsbPalettefname = "") const noexcept(false)
   {
-    return saveRGBPalette(rgbPalettefname) | saveHSBPalette(hsbPalettefname);
+    return saveRGBPalette(rgbPalettefname) | saveRGBHexPalette(rgbHexPalettefname) | saveHSBPalette(hsbPalettefname);
   }
 
   bool
@@ -252,9 +253,40 @@ public:
     return true;
   }  // saveRGBPalette
 
+  bool
+  saveRGBHexPalette(const std::string& fname = "") const noexcept(false)
+  {
+    const std::string mode {"rgbhex"};
+    const std::string fn {fname + mode + "-palette-" + std::to_string(numColors_) + ".txt"};
+    std::ofstream outf(fn.c_str(), std::ios::out | std::ios::binary | std::ios::trunc);
+    uint16_t i {0};
+
+    if ( outf.is_open() )
+    {
+      for (auto&& c: rgbPalette_)
+      {
+        outf << "#" << std::hex
+             // << std::setw(2) << std::setfill('0') << static_cast<uint16_t>(c.Alpha()) // << " "
+             << std::setw(2) << std::setfill('0') << static_cast<uint16_t>(c.Red()) // << " "
+             << std::setw(2) << std::setfill('0') << static_cast<uint16_t>(c.Green()) // << " "
+             << std::setw(2) << std::setfill('0') << static_cast<uint16_t>(c.Blue())
+             << std::dec << "\n";
+        ++i;
+      }
+    }
+    else
+    {
+      std::cerr << "Error: Unable to open file "
+                << fname
+                << "\n";
+      return false;
+    }
+    return true;
+  }  // saveRGBHexPalette
+
   // make a color map image in a .bmp/.ppm file
-  // T ::= sg::bmp | sg::ppm
-  template <typename T>
+  // T ::= sg::bmp | sg::ppm | sg::png
+  template <typename T = sg::png>
   bool
   makePaletteImage(const std::string& fname = "") const noexcept(false)
   {
@@ -284,7 +316,7 @@ public:
     const unsigned int width {bwidth * numColors_};
     const unsigned int height {bheight};
 
-    // Create an empty BMP/PPM image
+    // Create an empty BMP/PPM/PNG image
     T image(width, height);
 
     size_t x {};
@@ -310,11 +342,13 @@ public:
 
     const std::string bmpExtension {".bmp"};
     const std::string ppmExtension {".ppm"};
+    const std::string pngExtension {".png"};
     const std::string fileExtension { ((std::is_same<T, sg::ppm>::value) ? ppmExtension :
-                                       ((std::is_same<T, sg::bmp>::value) ? bmpExtension : ".img")) };
+                                       ((std::is_same<T, sg::bmp>::value) ? bmpExtension :
+                                        ((std::is_same<T, sg::png>::value) ? pngExtension : ".img"))) };
     const std::string paletteFileName {fname + "palette-" + std::to_string(numColors_) + fileExtension};
 
-    // Save the image in a binary BMP/PPM file
+    // Save the image in a binary BMP/PPM/PNG file
     return image.write(paletteFileName);
   }  // makePaletteImage
 

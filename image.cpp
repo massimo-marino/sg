@@ -16,7 +16,9 @@ bmp::~bmp() {}
 
 png::~png() {}
 
-namespace imageTest {
+}  // namespace sg
+
+namespace sg::imageTest {
 
 [[maybe_unused]]
 void
@@ -98,7 +100,7 @@ testPNG()
 
   std::string fname {"../images/4-stacked-images.png"};
 
-  if ( image.write_png_file(fname) )
+  if (image.write(fname) )
   {
     std::cout << "...saved '" << fname << "'\n";
   }
@@ -143,6 +145,4 @@ testImageFileFormat()
   std::cout << ((b3 == true)  ? "OK" : "NOT OK") << std::endl;
 }  // testImageFileFormat
 
-}  // namespace imageTest
-
-}  // namespace sg
+}  // namespace sg::imageTest

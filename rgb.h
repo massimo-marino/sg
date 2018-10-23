@@ -13,7 +13,7 @@
 namespace sg::rgb {
 
 // 0xAARRGGBB -> AA alpha, RR red, GG green, BB blue
-// alpha not used in class RGB, set to 0x00 by default
+// when alpha not used in class RGB is set to 0x00 by default
 using RGB_t = uint32_t;
 
 class RGB final
@@ -24,6 +24,9 @@ public:
 
   explicit
   RGB(const u_char _c) : rgbHex_(static_cast<RGB_t>(_c << 16 | _c << 8 | _c)) {}
+
+  explicit
+  RGB(const u_char _a, const u_char _r, const u_char _g, const u_char _b) : rgbHex_(static_cast<RGB_t>(_a << 24 | _r << 16 | _g << 8 | _b)) {}
 
   explicit
   RGB(const u_char _r, const u_char _g, const u_char _b) : rgbHex_(static_cast<RGB_t>(_r << 16 | _g << 8 | _b)) {}
@@ -96,6 +99,14 @@ public:
     return rgbHex_;
   }
 
+  template <typename A = u_char>
+  RGB&
+  setA(const A _a) noexcept
+  {
+    rgbHex_ = rgbHex_ | static_cast<RGB_t>(static_cast<u_char>(_a) << 24);
+    return *this;
+  }
+
   template <typename R = u_char>
   RGB&
   setR(const R _r) noexcept
@@ -120,11 +131,19 @@ public:
     return *this;
   }
 
+  template <typename A = u_char, typename R = u_char, typename G = u_char, typename B = u_char>
+  RGB&
+  setRGB(const A _a, const R _r, const G _g, const B _b) noexcept
+  {
+    rgbHex_ = static_cast<RGB_t>(static_cast<u_char>(_a) << 24 | static_cast<u_char>(_r) << 16 | static_cast<u_char>(_g) << 8 | static_cast<u_char>(_b));
+    return *this;
+  }
+
   template <typename R = u_char, typename G = u_char, typename B = u_char>
   RGB&
   setRGB(const R _r, const G _g, const B _b) noexcept
   {
-    rgbHex_ = static_cast<RGB_t>(_r) << 16 | static_cast<RGB_t>(_g) << 8 | static_cast<RGB_t>(_b);
+    rgbHex_ = static_cast<RGB_t>(static_cast<u_char>(_r) << 16 | static_cast<u_char>(_g) << 8 | static_cast<u_char>(_b));
     return *this;
   }
 

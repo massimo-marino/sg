@@ -46,12 +46,15 @@ void testPalette_2()
   palette::Palette p128 {128};
   palette::Palette p256 {256};
 
-  p128.savePalettes("../palettes/", "../palettes/");
+  p128.savePalettes("../palettes/", "../palettes/", "../palettes/");
+  p256.saveRGBHexPalette("../palettes/");
   p256.saveRGBPalette("../palettes/");
   p256.saveHSBPalette("../palettes/");
 
-  p4.savePalettes("../palettes/", "../palettes/");
-  p4.shufflePalette().savePalettes("../palettes/p4-shuffled-", "../palettes/p4-shuffled-");
+  p4.savePalettes("../palettes/", "../palettes/",  "../palettes/");
+  p4.shufflePalette().savePalettes("../palettes/p4-shuffled-",
+                                   "../palettes/p4-shuffled-",
+                                   "../palettes/p4-shuffled-");
 }  // testPalette_2
 
 [[maybe_unused]]
@@ -63,8 +66,11 @@ void testPalette_3()
   {
     palette::Palette p {nc};
 
-    p.makePaletteImage<sg::ppm>("../palettes/");
-    p.makePaletteImage<sg::bmp>("../palettes/");
+    // palette image saved in a png file by default
+    p.makePaletteImage("../palettes/");
+//    p.makePaletteImage<sg::ppm>("../palettes/");
+//    p.makePaletteImage<sg::bmp>("../palettes/");
+//    p.makePaletteImage<sg::png>("../palettes/");
     //p.shufflePalette().makePaletteImage<ppm::ppm>("../palettes/p-shuffled-");
   }
 }  // testPalette_3
@@ -74,9 +80,15 @@ void testPalette_4()
 {
   palette::Palette p {"../palettes/0330-stage-1.2-palette.txt"};
 
-  p.savePalettes("../palettes/", "../palettes/");
-  p.makePaletteImage<sg::ppm>("../palettes/");
-  p.makePaletteImage<sg::bmp>("../palettes/");
+  p.savePalettes("../palettes/0330-stage-1.2-",
+                 "../palettes/0330-stage-1.2-",
+                 "../palettes/0330-stage-1.2-");
+
+  // palette image saved in a png file by default
+  p.makePaletteImage("../palettes/");
+//  p.makePaletteImage<sg::ppm>("../palettes/");
+//  p.makePaletteImage<sg::bmp>("../palettes/");
+//  p.makePaletteImage<sg::png>("../palettes/");
 
 }  // testPalette_4
 

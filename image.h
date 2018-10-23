@@ -35,12 +35,16 @@ protected:
   {
     if (std::ifstream ifs {path, std::ios_base::binary})
     {
-      char magicFromFile[3] {};
+      const auto numChars {magic.length()};
+      auto magicFromFile {std::make_unique<char[]>(numChars + 1)};
+      size_t i {0};
 
-      ifs >> magicFromFile[0];
-      ifs >> magicFromFile[1];
-
-      return (static_cast<std::string>(magicFromFile) == magic);
+      for (i = 0; i < numChars; ++i)
+      {
+        ifs >> magicFromFile[i];
+      }
+      magicFromFile[i] = '\0';
+      return (static_cast<std::string>(magicFromFile.get()) == magic);
     }
     return false;
   }  // checkGraphicFile
@@ -301,7 +305,7 @@ public:
   }  // write
 
   bool
-  write_png_file( const std::string& fname)
+  write(const std::string &fname)
   {
     std::vector<unsigned char> data_to_write {write()};
 
@@ -523,13 +527,13 @@ public:
 
 #pragma pack (pop)
 
-namespace imageTest {
+}  // namespace sg
+
+namespace sg::imageTest {
 
 [[maybe_unused]] void testPPM();
 [[maybe_unused]] void testBMP();
 [[maybe_unused]] void testPNG();
 [[maybe_unused]] void testImageFileFormat();
 
-}  // namespace imageTest
-
-}  // namespace sg
+}  // namespace sg::imageTest

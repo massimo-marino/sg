@@ -33,7 +33,7 @@ testRGB()
   std::cout << std::boolalpha << (aColor1 == aColor2) << std::endl;
   std::cout << std::boolalpha << (aColor1 != aColor1) << std::endl;
   std::cout << std::boolalpha << (aColor1 != aColor2) << std::endl;
-  std::cout << std::hex << "0x" << aColor2.rgb() << std::endl;
+  std::cout << std::hex << "0x" << aColor2.rgb() << std::dec << std::endl;
 }  // testRGB
 
 [[maybe_unused]]
