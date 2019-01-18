@@ -8,10 +8,12 @@
 #include "image.h"
 #include "randomNumberGenerators.h"
 
+#include <iomanip>
 #include <fstream>
 #include <cstdint>
 #include <vector>
 #include <type_traits>
+#include <algorithm>
 ////////////////////////////////////////////////////////////////////////////////
 namespace sg::palette {
 
@@ -54,42 +56,6 @@ private:
     }
   }  // makePalette
 
-  // load a palette from a text file where each line is of this format:
-  // #rrggbb\n
-  // where r, g, b characters are hex digits
-  // a palette file is generated for instance from GIMP 2.8 in: ~/.gimp-2.8/palettes/
-  bool
-  loadHexPaletteFromFile(const std::string &fname) const noexcept(false)
-  {
-    std::ifstream inf(fname, std::ios::in | std::ios::binary);
-    if ( !inf.is_open() )
-    {
-      return false;
-    }
-
-    uint32_t numColors {0};
-    rgb::RGB rgb {};
-    std::string line {};
-
-    rgbPalette_.clear();
-    while ( std::getline(inf, line) )
-    {
-      // remove heading '#'
-      line.erase(0, 1);
-      rgbPalette_.push_back(rgb.setRGB(std::stoi(line, nullptr, 16)));
-      ++numColors;
-
-      if ( inf.eof() )
-      {
-        break;
-      }
-    }
-    std::sort(rgbPalette_.begin(), rgbPalette_.end());
-    numColors_ = numColors;
-
-    return true;
-  }  // loadHexPaletteFromFile
-
 public:
   // default ctor
   explicit
@@ -122,38 +88,6 @@ public:
     loadHexPaletteFromFile(fname);
   }
 
-  // default dtor
-  ~Palette() = default;
-
-  // default copy ctor
-  // usage:
-  // Palette obj{};
-  // Palette copiedObj{obj};
-  Palette(const Palette &rhs) = default;
-
-  // default copy assignment
-  // usage:
-  // Palette obj{};
-  // Palette copiedObj;
-  // copiedObj = obj;
-  Palette&
-  operator=(const Palette &rhs) = default;
-
-  // default move ctor
-  // The move constructor is called whenever selected by overload resolution,
-  // which typically occurs when an object is initialized (by direct-initialization
-  // or copy-initialization) from rvalue (xvalue or prvalue) (until C++17)
-  // xvalue (since C++17) of the same type, including:
-  //
-  // initialization: T a = std::move(b); or T a(std::move(b));, where b is of type T;
-  // function argument passing: f(std::move(a));, where a is of type T and f is void f(T t);
-  // function return: return a; inside a function such as T f(), where a is of type T which has a move constructor.
-  Palette(Palette &&rhs) = default;
-
-  // default move assignment operator
-  Palette&
-  operator=(Palette &&rhs) = default;
-
   pixels_t
   operator()() const noexcept
   {
@@ -172,6 +106,21 @@ public:
     return rgbPalette_;
   }
 
+  constexpr
+  size_t
+  size () const noexcept
+  {
+    return rgbPalette_.size();
+  }
+
+  Palette&
+  sortPalette() noexcept
+  {
+    std::sort(rgbPalette_.begin(), rgbPalette_.end());
+
+    return *this;
+  }
+
   Palette&
   shufflePalette() noexcept
   {
@@ -185,6 +134,41 @@ public:
 
     return *this;
   }  // shufflePalette
+
+  // load a palette from a text file where each line is of this format:
+  // #rrggbb\n
+  // where r, g, b characters are hex digits
+  // a palette file is generated for instance from GIMP 2.8 in: ~/.gimp-2.8/palettes/
+  bool
+  loadHexPaletteFromFile(const std::string &fname) const noexcept(false)
+  {
+    std::ifstream inf(fname, std::ios::in | std::ios::binary);
+    if ( !inf.is_open() )
+    {
+      return false;
+    }
+
+    uint32_t numColors {0};
+    rgb::RGB rgb {};
+    std::string line {};
+
+    rgbPalette_.clear();
+    while ( std::getline(inf, line) )
+    {
+      // remove heading '#'
+      line.erase(0, 1);
+      rgbPalette_.push_back(rgb.setRGB(std::stoi(line, nullptr, 16)));
+      ++numColors;
+
+      if ( inf.eof() )
+      {
+        break;
+      }
+    }
+    numColors_ = numColors;
+
+    return true;
+  }  // loadHexPaletteFromFile
 
   bool
   savePalettes(const std::string& rgbPalettefname = "",
@@ -266,9 +250,9 @@ public:
       for (auto&& c: rgbPalette_)
       {
         outf << "#" << std::hex
-             // << std::setw(2) << std::setfill('0') << static_cast<uint16_t>(c.Alpha()) // << " "
-             << std::setw(2) << std::setfill('0') << static_cast<uint16_t>(c.Red()) // << " "
-             << std::setw(2) << std::setfill('0') << static_cast<uint16_t>(c.Green()) // << " "
+             //<< std::setw(2) << std::setfill('0') << static_cast<uint16_t>(c.Alpha()) //<< " "
+             << std::setw(2) << std::setfill('0') << static_cast<uint16_t>(c.Red()) //<< " "
+             << std::setw(2) << std::setfill('0') << static_cast<uint16_t>(c.Green()) //<< " "
              << std::setw(2) << std::setfill('0') << static_cast<uint16_t>(c.Blue())
              << std::dec << "\n";
         ++i;
@@ -284,7 +268,7 @@ public:
     return true;
   }  // saveRGBHexPalette
 
-  // make a color map image in a .bmp/.ppm file
+  // make a color map image in a .bmp/.ppm/.png file
   // T ::= sg::bmp | sg::ppm | sg::png
   template <typename T = sg::png>
   bool
@@ -308,7 +292,7 @@ public:
     }
     else
     {
-      bwidth = 50;
+      bwidth = 25;
     }
     // bheight: the height of a single color band in the color map,
     // same value of the full image height
@@ -356,7 +340,7 @@ public:
 
 #pragma pack (pop)
 
-}  // namespace sg::palette
+} // namespace sg::palette
 
 namespace sg::paletteTest {
 
@@ -364,6 +348,7 @@ namespace sg::paletteTest {
 [[maybe_unused]] void testPalette_2();
 [[maybe_unused]] void testPalette_3();
 [[maybe_unused]] void testPalette_4();
+[[maybe_unused]] void testPalette_5();
 
 }  // namespace sg::paletteTest
 

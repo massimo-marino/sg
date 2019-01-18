@@ -51,7 +51,7 @@ void testPalette_2()
   p256.saveRGBPalette("../palettes/");
   p256.saveHSBPalette("../palettes/");
 
-  p4.savePalettes("../palettes/", "../palettes/",  "../palettes/");
+  p4.savePalettes("../palettes/", "../palettes/", "../palettes/");
   p4.shufflePalette().savePalettes("../palettes/p4-shuffled-",
                                    "../palettes/p4-shuffled-",
                                    "../palettes/p4-shuffled-");
@@ -91,5 +91,21 @@ void testPalette_4()
 //  p.makePaletteImage<sg::png>("../palettes/");
 
 }  // testPalette_4
+
+[[maybe_unused]]
+void testPalette_5()
+{
+  palette::Palette p {"../palettes/c20-sorted.txt"};
+
+  p.saveRGBHexPalette("../palettes/c20-sorted-");
+  // palette image saved in a png file
+  p.makePaletteImage<sg::png>("../palettes/c20-sorted-");
+
+  p.shufflePalette();
+  p.saveRGBHexPalette("../palettes/c20-shuffled-");
+  // palette image saved in a png file
+  p.makePaletteImage<sg::png>("../palettes/c20-shuffled-");
+
+}  // testPalette_5
 
 }  // namespace sg::PaletteTest

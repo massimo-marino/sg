@@ -22,6 +22,8 @@ int main()
   // color map image in bmp, ppm files
   sg::paletteTest::testPalette_4();
 
+  sg::paletteTest::testPalette_5();
+
   sg::imageTest::testPPM();
   sg::imageTest::testBMP();
   sg::imageTest::testPNG();

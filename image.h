@@ -458,7 +458,7 @@ private:
     std::uint32_t biClrUsed {0};
     std::uint32_t biClrImportant {0};
   };  // struct BMPHeader
-  static_assert(sizeof(BMPHeader) == 54);
+  static_assert(sizeof(BMPHeader) == 54, "BMPHeader must be 54 bytes");
 
 //  constexpr
 //  bool
