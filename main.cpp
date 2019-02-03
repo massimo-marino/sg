@@ -23,6 +23,7 @@ int main()
   sg::paletteTest::testPalette_4();
 
   sg::paletteTest::testPalette_5();
+  sg::paletteTest::testPalette_6();
 
   sg::imageTest::testPPM();
   sg::imageTest::testBMP();

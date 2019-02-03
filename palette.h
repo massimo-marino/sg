@@ -278,13 +278,13 @@ public:
     // bwidth: the width of a single color band in the color map
     unsigned int bwidth {1};
     // bwidth is chosen depending on the number of colors
-    if ( numColors_ > 100 )
+    if ( numColors_ > 256 )
     {
-      bwidth = 2;
+      bwidth = 5;
     }
     else if ( numColors_ > 50 )
     {
-      bwidth = 8;
+      bwidth = 20;
     }
     else if ( numColors_ > 25 )
     {
@@ -349,6 +349,7 @@ namespace sg::paletteTest {
 [[maybe_unused]] void testPalette_3();
 [[maybe_unused]] void testPalette_4();
 [[maybe_unused]] void testPalette_5();
+[[maybe_unused]] void testPalette_6();
 
 }  // namespace sg::paletteTest
 

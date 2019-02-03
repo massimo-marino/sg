@@ -80,6 +80,7 @@ void testPalette_4()
 {
   palette::Palette p {"../palettes/0330-stage-1.2-palette.txt"};
 
+  p.sortPalette();
   p.savePalettes("../palettes/0330-stage-1.2-",
                  "../palettes/0330-stage-1.2-",
                  "../palettes/0330-stage-1.2-");
@@ -107,5 +108,21 @@ void testPalette_5()
   p.makePaletteImage<sg::png>("../palettes/c20-shuffled-");
 
 }  // testPalette_5
+
+[[maybe_unused]]
+void testPalette_6()
+{
+  palette::Palette p {"../palettes/c20-sorted-2.txt"};
+
+  p.saveRGBHexPalette("../palettes/c20-sorted-2-");
+  // palette image saved in a png file
+  p.makePaletteImage<sg::png>("../palettes/c20-sorted-2-");
+
+  p.shufflePalette();
+  p.saveRGBHexPalette("../palettes/c20-shuffled-2-");
+  // palette image saved in a png file
+  p.makePaletteImage<sg::png>("../palettes/c20-shuffled-2-");
+
+}  // testPalette_6
 
 }  // namespace sg::PaletteTest
