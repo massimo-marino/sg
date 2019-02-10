@@ -34,9 +34,9 @@ private:
   // saturation, brightness in [0,1]
   // hue in [0,360]
   void
-  makePalette(const uint32_t numColors = numColorsDefault_,
-              const float saturation = saturationDefault_,
-              const float brightness = brightnessDefault_) const noexcept
+  makeHSBPalette(const uint32_t numColors = numColorsDefault_,
+                 const float saturation = saturationDefault_,
+                 const float brightness = brightnessDefault_) const noexcept
   {
     numColors_ = numColors;
     saturation_ = saturation;
@@ -54,32 +54,32 @@ private:
       rgbPalette_.push_back(c.hsv2rgb(hue, saturation_, brightness_));
       hue = hue + hueIncrement;
     }
-  }  // makePalette
+  }  // makeHSBPalette
 
 public:
   // default ctor
   explicit
   Palette()
   {
-    makePalette();
+    makeHSBPalette();
   }
 
   explicit
   Palette(const uint32_t numColors)
   {
-    makePalette(numColors);
+    makeHSBPalette(numColors);
   }
 
   explicit
   Palette(const uint32_t numColors, const float saturation)
   {
-    makePalette(numColors, saturation);
+    makeHSBPalette(numColors, saturation);
   }
 
   explicit
   Palette(const uint32_t numColors, const float saturation, const float brightness)
   {
-    makePalette(numColors, saturation, brightness);
+    makeHSBPalette(numColors, saturation, brightness);
   }
 
   explicit
@@ -250,9 +250,9 @@ public:
       for (auto&& c: rgbPalette_)
       {
         outf << "#" << std::hex
-             //<< std::setw(2) << std::setfill('0') << static_cast<uint16_t>(c.Alpha()) //<< " "
-             << std::setw(2) << std::setfill('0') << static_cast<uint16_t>(c.Red()) //<< " "
-             << std::setw(2) << std::setfill('0') << static_cast<uint16_t>(c.Green()) //<< " "
+             // << std::setw(2) << std::setfill('0') << static_cast<uint16_t>(c.Alpha())
+             << std::setw(2) << std::setfill('0') << static_cast<uint16_t>(c.Red())
+             << std::setw(2) << std::setfill('0') << static_cast<uint16_t>(c.Green())
              << std::setw(2) << std::setfill('0') << static_cast<uint16_t>(c.Blue())
              << std::dec << "\n";
         ++i;
@@ -350,6 +350,7 @@ namespace sg::paletteTest {
 [[maybe_unused]] void testPalette_4();
 [[maybe_unused]] void testPalette_5();
 [[maybe_unused]] void testPalette_6();
+[[maybe_unused]] void testPalette_7();
 
 }  // namespace sg::paletteTest
 

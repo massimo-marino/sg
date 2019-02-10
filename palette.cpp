@@ -86,10 +86,15 @@ void testPalette_4()
                  "../palettes/0330-stage-1.2-");
 
   // palette image saved in a png file by default
-  p.makePaletteImage("../palettes/");
+  p.makePaletteImage("../palettes/0330-stage-1.2-");
 //  p.makePaletteImage<sg::ppm>("../palettes/");
 //  p.makePaletteImage<sg::bmp>("../palettes/");
 //  p.makePaletteImage<sg::png>("../palettes/");
+
+  p.shufflePalette();
+  p.saveRGBHexPalette("../palettes/0330-stage-1.2-shuffled-");
+  // palette image saved in a png file
+  p.makePaletteImage<sg::png>("../palettes/0330-stage-1.2-shuffled-");
 
 }  // testPalette_4
 
@@ -124,5 +129,26 @@ void testPalette_6()
   p.makePaletteImage<sg::png>("../palettes/c20-shuffled-2-");
 
 }  // testPalette_6
+
+[[maybe_unused]]
+void testPalette_7()
+{
+  uint32_t numColors {256};
+  float saturation {0.925f};
+  float brightness {0.935f};
+  palette::Palette p {numColors, saturation, brightness};
+
+  p.saveRGBHexPalette("../palettes/");
+  p.saveRGBPalette("../palettes/");
+  p.saveHSBPalette("../palettes/");
+  // palette image saved in a png file by default
+  p.makePaletteImage("../palettes/");
+
+//  p.shufflePalette().savePalettes("../palettes/p256-shuffled-",
+//                                      "../palettes/p256-shuffled-",
+//                                      "../palettes/p256-shuffled-");
+//  // palette image saved in a png file
+//  p.makePaletteImage<sg::png>("../palettes/p256-shuffled-");
+}  // testPalette_7
 
 }  // namespace sg::PaletteTest

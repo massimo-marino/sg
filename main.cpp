@@ -6,7 +6,9 @@
 #include "image.h"
 ////////////////////////////////////////////////////////////////////////////////
 
-int main()
+[[maybe_unused]]
+static
+void fullTests()
 {
   sg::rgbTest::testRGB();
   sg::rgbTest::testhsv2rgb();
@@ -24,6 +26,7 @@ int main()
 
   sg::paletteTest::testPalette_5();
   sg::paletteTest::testPalette_6();
+  sg::paletteTest::testPalette_7();
 
   sg::imageTest::testPPM();
   sg::imageTest::testBMP();
@@ -32,6 +35,13 @@ int main()
 
   sg::perlinTest::perlinDemo00();
   sg::perlinTest::perlinDemo01();
+}
+
+int main()
+{
+//  fullTests();
+  sg::paletteTest::testPalette_7();
+
 
   return 0;
 }
