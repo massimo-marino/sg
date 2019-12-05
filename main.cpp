@@ -39,8 +39,8 @@ void fullTests()
 
 int main()
 {
-//  fullTests();
-  sg::paletteTest::testPalette_7();
+  fullTests();
+//  sg::paletteTest::testPalette_7();
 
 
   return 0;

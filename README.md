@@ -9,7 +9,7 @@ This is a Work in Progress.
 
 `cmake` is used to compile the sources.
 
-The default compiler used is `clang 7.0.0`.
+The default compiler used is `clang 9.0.0`.
 
 The cmake files compile with `-std=c++17`.
 
