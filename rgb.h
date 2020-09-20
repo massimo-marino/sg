@@ -8,6 +8,7 @@
 #include "helpers.h"
 
 #include <iostream>
+#include <vector>
 #include <cmath>
 ////////////////////////////////////////////////////////////////////////////////
 namespace sg::rgb {
@@ -20,7 +21,7 @@ class RGB final
 {
 public:
   explicit
-  RGB() : rgbHex_(0) {}
+  RGB() = default;
 
   explicit
   RGB(const u_char _c) : rgbHex_(static_cast<RGB_t>(_c << 16 | _c << 8 | _c)) {}
@@ -37,62 +38,53 @@ public:
   explicit
   RGB(RGB_t _rgb) : rgbHex_(_rgb) {}
 
-  constexpr
   bool
   operator==(const RGB &rhs) const noexcept
   {
     return rhs.rgbHex_ == rgbHex_;
   }
 
-  constexpr
   bool
   operator!=(const RGB &rhs) const noexcept
   {
     return rhs.rgbHex_ != rgbHex_;
   }
 
-  constexpr
   RGB_t
   operator()() const noexcept
   {
     return rgbHex_;
   }
 
-  constexpr
   operator RGB_t() const noexcept
   {
     return rgbHex_;
   }
 
-  constexpr
   u_char
   Alpha() const noexcept
   {
     return static_cast<u_char>((rgbHex_ & ALPHAMASK_) >> 24);
   }
 
-  constexpr
   u_char
   Red() const noexcept
   {
     return static_cast<u_char>((rgbHex_ & REDMASK_) >> 16);
   }
 
-  constexpr
   u_char
   Green() const noexcept
   {
     return static_cast<u_char>((rgbHex_ & GREENMASK_) >> 8);
   }
 
-  constexpr
   u_char
   Blue() const noexcept
   {
     return static_cast<u_char>(rgbHex_ & BLUEMASK_);
   }
 
-  constexpr
   RGB_t
   rgb() const noexcept
   {
@@ -161,11 +153,14 @@ public:
     return *this;
   }
 
-  // hue in [0,360]
-  // saturation,brightness in [0,1]
+  //
+  // hue H in [0,360)
+  // saturation S, brightness B in [0,1]
   // r,g,b in [0,255]
+  // http://colorizer.org/
+  //
   RGB&
-  hsv2rgb(float hue, const float saturation, float brightness) noexcept
+  hsv2rgb(const float hue, const float saturation, float brightness) noexcept
   {
     if ( 0.0f == saturation )
     {
@@ -173,42 +168,43 @@ public:
       brightness = std::round(brightness * 255.0f);
       return setRGB(brightness, brightness, brightness);
     }
-    else
+
+    int i{};
+    float f{};
+    float p{};
+    float q{};
+    float t{};
+
+    float hhue = hue / 60.0f;  // sector 0 to 5
+    i = static_cast<int>(std::floor(hhue));
+    f = hhue - i;      // factorial part of hue
+    p = std::round( (brightness * (1 - saturation)) * 255.0f );
+    q = std::round( (brightness * (1 - saturation * f)) * 255.0f );
+    t = std::round( (brightness * (1 - saturation * (1 - f))) * 255.0f );
+    brightness = std::round(brightness * 255.0f);
+
+    switch ( i )
     {
-      int i{};
-      float f{};
-      float p{};
-      float q{};
-      float t{};
-
-      hue = hue / 60.0f;  // sector 0 to 5
-      i = static_cast<int>(std::floor(hue));
-      f = hue - i;      // factorial part of hue
-      p = std::round( (brightness * (1 - saturation)) * 255.0f );
-      q = std::round( (brightness * (1 - saturation * f)) * 255.0f );
-      t = std::round( (brightness * (1 - saturation * (1 - f))) * 255.0f );
-      brightness = std::round(brightness * 255.0f);
-
-      switch ( i )
-      {
-        case 0:
-          return setRGB(brightness, t, p);
-        case 1:
-          return setRGB(q, brightness, p);
-        case 2:
-          return setRGB(p, brightness, t);
-        case 3:
-          return setRGB(p, q, brightness);
-        case 4:
-          return setRGB(t, p, brightness);
-        default:  // case 5:
-          return setRGB(brightness, p, q);
-      }
+      case 0:
+        return setRGB(brightness, t, p);
+      case 1:
+        return setRGB(q, brightness, p);
+      case 2:
+        return setRGB(p, brightness, t);
+      case 3:
+        return setRGB(p, q, brightness);
+      case 4:
+        return setRGB(t, p, brightness);
+      case 5:
+      default:
+        return setRGB(brightness, p, q);
     }
   }  // hsv2rgb
 
   //
   // adapted from: http://lolengine.net/blog/2013/01/13/fast-rgb-to-hsv
+  //
+  // http://colorizer.org/
   //
   void rgb2hsv(float& hue, float& saturation, float& brightness) const noexcept
   {

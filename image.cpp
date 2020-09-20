@@ -8,13 +8,13 @@
 ////////////////////////////////////////////////////////////////////////////////
 namespace sg {
 
-image::~image() {}
+image::~image() = default;
 
-ppm::~ppm() {}
+ppm::~ppm() = default;
 
-bmp::~bmp() {}
+bmp::~bmp() = default;
 
-png::~png() {}
+png::~png() = default;
 
 }  // namespace sg
 

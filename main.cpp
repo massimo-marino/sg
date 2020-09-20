@@ -39,9 +39,8 @@ void fullTests()
 
 int main()
 {
-  fullTests();
-//  sg::paletteTest::testPalette_7();
+  sg::rgbTest::testhsv2rgb();
+  //  fullTests();
 
-
-  return 0;
+ return 0;
 }

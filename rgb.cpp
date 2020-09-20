@@ -8,9 +8,11 @@
 
 std::ostream& operator<<(std::ostream &os, const sg::rgb::RGB& rgb)
 {
-  return os << static_cast<uint16_t>(rgb.Red()) << " "
-            << static_cast<uint16_t>(rgb.Green()) << " "
-            << static_cast<uint16_t>(rgb.Blue());
+  return os << "RGB("
+            << static_cast<uint16_t>(rgb.Red()) << ","
+            << static_cast<uint16_t>(rgb.Green()) << ","
+            << static_cast<uint16_t>(rgb.Blue())
+            << ")";
 }
 
 namespace sg::rgbTest {
@@ -23,17 +25,17 @@ testRGB()
   rgb::RGB aColor2 {255, 255, 255};
   rgb::RGB aColor3 (0x123456);
 
-  std::cout << aColor1 << std::endl;
-  std::cout << aColor2 << std::endl;
-  std::cout << aColor3 << std::endl;
-  std::cout << std::hex << aColor3 << std::dec << std::endl;
+  std::cout << "aColor1 (0,0,0): " << aColor1 << std::endl;
+  std::cout << "aColor2(255, 255, 255): " << aColor2 << std::endl;
+  std::cout << "aColor3(18, 52, 86): " << aColor3 << std::endl;
+  std::cout << "aColor3(0x12, 0x34, 0x56): " << std::hex << aColor3 << std::dec << std::endl;
   aColor1 = aColor2;
-  std::cout << aColor1 << std::endl;
-  std::cout << std::boolalpha << (aColor1 == aColor1) << std::endl;
-  std::cout << std::boolalpha << (aColor1 == aColor2) << std::endl;
-  std::cout << std::boolalpha << (aColor1 != aColor1) << std::endl;
-  std::cout << std::boolalpha << (aColor1 != aColor2) << std::endl;
-  std::cout << std::hex << "0x" << aColor2.rgb() << std::dec << std::endl;
+  std::cout << "aColor1(255, 255, 255): " << aColor1 << std::endl;
+  std::cout << "(aColor1 == aColor1) is true: " << std::boolalpha << (aColor1 == aColor1) << std::endl;
+  std::cout << "(aColor1 == aColor2) is true: " << std::boolalpha << (aColor1 == aColor2) << std::endl;
+  std::cout << "(aColor1 != aColor1) is false: " << std::boolalpha << (aColor1 != aColor1) << std::endl;
+  std::cout << "(aColor1 != aColor2) is false: " << std::boolalpha << (aColor1 != aColor2) << std::endl;
+  std::cout << "aColor2 RGB HEX 0xffffff: " <<  std::hex << "0x" << aColor2.rgb() << std::dec << std::endl;
 }  // testRGB
 
 [[maybe_unused]]
@@ -50,32 +52,57 @@ testhsv2rgb()
 
   std::cout << std::boolalpha;
 
-  // 255 0 0 red
-  std::cout << ((c.hsv2rgb(0.0f, 1.0f, 1.0f) == RED) ? "OK" : "NOT OK ") << std::endl;
+  // 87 153 124
+  rgb::RGB& result = c.hsv2rgb(154.0f, 0.43f, 0.60f);
+  std::cout << ((result ==  rgb::RGB(87, 153, 124)) ? "OK" : "NOT OK ") << " - result: RGB: " << result << std::endl;
+
   // 255 5 0
-  std::cout << ((c.hsv2rgb(1.1764705f, 1.0f, 1.0f) == rgb::RGB(255, 5, 0)) ? "OK" : "NOT OK ") << std::endl;
-  // 255 0 11
-  std::cout << ((c.hsv2rgb(357.41177f, 1.0f, 1.0f) == rgb::RGB(255, 0, 11)) ? "OK" : "NOT OK ") << std::endl;
+  result = c.hsv2rgb(1.18f, 1.0f, 1.0f);
+  std::cout << ((result == rgb::RGB(255, 5, 0)) ? "OK" : "NOT OK") << " - result: RGB: " << result << std::endl;
+
+  // 37 106 211
+  result = c.hsv2rgb(216.12f, 0.8246f, 0.8275f);
+  std::cout << ((result == rgb::RGB(37, 106, 211)) ? "OK" : "NOT OK") << " - result: RGB: " << result << std::endl;
+
   // 255 0 5
-  std::cout << ((c.hsv2rgb(358.82352f, 1.0f, 1.0f) == rgb::RGB(255, 0, 5)) ? "OK" : "NOT OK ") << std::endl;
+  result = c.hsv2rgb(358.82352f, 1.0f, 1.0f);
+  std::cout << ((result == rgb::RGB(255, 0, 5)) ? "OK" : "NOT OK") << " - result: RGB: " << result << std::endl;
+
   // 26 13 13
-  std::cout << ((c.hsv2rgb(357.41177f, 0.5f, 0.1f) == rgb::RGB(26, 13, 13)) ? "OK" : "NOT OK ") << std::endl;
+  result = c.hsv2rgb(357.41177f, 0.5f, 0.1f);
+  std::cout << ((result == rgb::RGB(26, 13, 13)) ? "OK" : "NOT OK") << " - result: RGB: " << result << std::endl;
+
   // 0 0 0 black
-  std::cout << ((c.hsv2rgb(357.41177f, 0.0f, 0.0f) == BLACK) ? "OK" : "NOT OK ") << std::endl;
+  result = c.hsv2rgb(338.41177f, 0.0f, 0.0f);
+  std::cout << ((result == BLACK) ? "OK" : "NOT OK") << " - result: RGB: " << result << std::endl;
+
   // 255 255 255 white
-  std::cout << ((c.hsv2rgb(0.0f, 0.0f, 1.0f) == WHITE) ? "OK" : "NOT OK ") << std::endl;
+  result = c.hsv2rgb(0.0f, 0.0f, 1.0f);
+  std::cout << ((result == WHITE) ? "OK" : "NOT OK") << " - result: RGB: " << result << std::endl;
+
   // 255 0 0 red
-  std::cout << ((c.hsv2rgb(0.0f, 1.0f, 1.0f) == RED) ? "OK" : "NOT OK ") << std::endl;
+  result = c.hsv2rgb(0.0f, 1.0f, 1.0f);
+  std::cout << ((result == RED) ? "OK" : "NOT OK") << " - result: RGB: " << result << std::endl;
+
   /// 0 0 0 black
-  std::cout << ((c.hsv2rgb(0.0f, 1.0f, 0.0f) == BLACK) ? "OK" : "NOT OK ") << std::endl;
+  result = c.hsv2rgb(0.0f, 1.0f, 0.0f);
+  std::cout << ((result == BLACK) ? "OK" : "NOT OK") << " - result: RGB: " << result << std::endl;
+
   /// 0 0 0 black
-  std::cout << ((c.hsv2rgb(1.0f, 0.0f, 0.0f) == BLACK) ? "OK" : "NOT OK ") << std::endl;
+  result = c.hsv2rgb(1.0f, 0.0f, 0.0f);
+  std::cout << ((result == BLACK) ? "OK" : "NOT OK") << " - result: RGB: " << result << std::endl;
+
   /// 0 0 0 black
-  std::cout << ((c.hsv2rgb(90.0f, 0.0f, 0.0f) == BLACK) ? "OK" : "NOT OK ") << std::endl;
+  result = c.hsv2rgb(90.0f, 0.0f, 0.0f);
+  std::cout << ((result == BLACK) ? "OK" : "NOT OK") << " - result: RGB: " << result << std::endl;
+
   /// 0 255 0 green
-  std::cout << ((c.hsv2rgb(120.0f, 1.0f, 1.0f) == GREEN) ? "OK" : "NOT OK ") << std::endl;
-  /// 0 0 255 blu
-  std::cout << ((c.hsv2rgb(240.0f, 1.0f, 1.0f) == BLUE) ? "OK" : "NOT OK ") << std::endl;
+  result = c.hsv2rgb(120.0f, 1.0f, 1.0f);
+  std::cout << ((result == GREEN) ? "OK" : "NOT OK") << " - result: RGB: " << result << std::endl;
+
+  /// 0 0 255 blue
+  result = c.hsv2rgb(240.0f, 1.0f, 1.0f);
+  std::cout << ((result == BLUE) ? "OK" : "NOT OK") << " - result: RGB: " << result << std::endl;
 }  // testhsv2rgb
 
 [[maybe_unused]]
@@ -95,27 +122,27 @@ testrgb2hsv()
   std::cout << std::endl << std::endl;
 
   BLACK.rgb2hsv(hue, saturation, brightness);
-  std::cout << hue << " " << saturation << " " << brightness << std::endl;
+  std::cout << "BLACK RGB(0,0,0): HSV: " << hue << " " << saturation << " " << brightness << std::endl;
 
   WHITE.rgb2hsv(hue, saturation, brightness);
-  std::cout << hue << " " << saturation << " " << brightness << std::endl;
+  std::cout << "WHITE RGB(255,255,255): HSV: " << hue << " " << saturation << " " << brightness << std::endl;
 
   RED.rgb2hsv(hue, saturation, brightness);
-  std::cout << hue << " " << saturation << " " << brightness << std::endl;
+  std::cout << "RED RGB(255,0,0): HSV: " << hue << " " << saturation << " " << brightness << std::endl;
 
   GREEN.rgb2hsv(hue, saturation, brightness);
-  std::cout << hue << " " << saturation << " " << brightness << std::endl;
+  std::cout << "GREEN RGB(0,255,0): HSV: " << hue << " " << saturation << " " << brightness << std::endl;
 
   BLUE.rgb2hsv(hue, saturation, brightness);
-  std::cout << hue << " " << saturation << " " << brightness << std::endl;
+  std::cout << "BLUE RGB(0,0,255): HSV: " << hue << " " << saturation << " " << brightness << std::endl;
 
   // 60 100 49.02
   rgb::RGB(125, 125, 0).rgb2hsv(hue, saturation, brightness);
-  std::cout << hue << " " << saturation << " " << brightness << std::endl;
+  std::cout << "RGB(125, 125, 0) -> HSV(60,100,49.02): HSV: " << hue << " " << saturation << " " << brightness << std::endl;
 
   // 0 50 10.2
   rgb::RGB(26, 13, 13).rgb2hsv(hue, saturation, brightness);
-  std::cout << hue << " " << saturation << " " << brightness << std::endl;
+  std::cout << "RGB(26, 13, 13) -> HSV(0,50,10.2): HSV: " << hue << " " << saturation << " " << brightness << std::endl;
 }
 
 }  // namespace sg::rgbTest

@@ -11,6 +11,7 @@
 #include <fstream>
 #include <sstream>
 #include <exception>
+#include <memory>
 #include <png.h>
 ////////////////////////////////////////////////////////////////////////////////
 namespace sg {
@@ -98,14 +99,12 @@ public:
   image&
   operator=(image &&rhs) = default;
 
-  constexpr
   uint32_t
   width() const noexcept
   {
     return width_;
   }
 
-  constexpr
   uint32_t
   height() const noexcept
   {
@@ -517,11 +516,8 @@ public:
       }
       return true;
     }
-    else
-    {
-      // error trying to open the file
-      return false;
-    }
+    // error trying to open the file
+    return false;
   }
 };  // class bmp
 
