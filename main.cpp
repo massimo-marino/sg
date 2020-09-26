@@ -14,19 +14,21 @@ void fullTests()
   sg::rgbTest::testhsv2rgb();
   sg::rgbTest::testrgb2hsv();
 
-  // simple palette creations
+  // simple palette creations; saved in image files and text files
+  sg::paletteTest::testPalette_0();
   sg::paletteTest::testPalette_1();
-  // palette creations and saving them in files in rgb and hsb codings (text files)
   sg::paletteTest::testPalette_2();
-  // palette creations and saving them in color map images in bmp and ppm formats
+  // palette creations and saving them in files in rgb and hsb codings (text files)
   sg::paletteTest::testPalette_3();
+  // palette creations and saving them in color map images in bmp and ppm formats
+  sg::paletteTest::testPalette_4();
   // read a palette file in hex coding and save it in rgb, hsb text files and the
   // color map image in bmp, ppm files
-  sg::paletteTest::testPalette_4();
-
   sg::paletteTest::testPalette_5();
+
   sg::paletteTest::testPalette_6();
   sg::paletteTest::testPalette_7();
+  sg::paletteTest::testPalette_8();
 
   sg::imageTest::testPPM();
   sg::imageTest::testBMP();
@@ -39,8 +41,7 @@ void fullTests()
 
 int main()
 {
-  sg::rgbTest::testhsv2rgb();
-  //  fullTests();
+  fullTests();
 
  return 0;
 }

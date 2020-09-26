@@ -59,10 +59,9 @@ private:
 public:
   // default ctor
   explicit
-  Palette()
-  {
-    makeHSBPalette();
-  }
+  Palette() :
+  numColors_(0)
+  {}
 
   explicit
   Palette(const uint32_t numColors)
@@ -111,6 +110,73 @@ public:
   size () const noexcept
   {
     return rgbPalette_.size();
+  }
+
+  Palette&
+  setSaturation (const float saturation) noexcept
+  {
+    saturation_ = saturation;
+
+    return *this;
+  }
+
+  Palette&
+  setBrightness (const float brightness) noexcept
+  {
+    brightness_ = brightness;
+
+    return *this;
+  }
+
+  Palette&
+  addRGBColor (const rgb::RGB color) noexcept
+  {
+    rgbPalette_.push_back(color);
+    ++numColors_;
+
+    return *this;
+  }
+
+  void
+  clear () const noexcept
+  {
+    numColors_ = 0;
+    rgbPalette_.clear();
+    rgbPalette_.shrink_to_fit();
+  }
+
+  void
+  clearAndResize (const uint32_t numColors) const noexcept
+  {
+    numColors_ = numColors;
+    rgbPalette_.clear();
+    rgbPalette_.reserve(numColors_);
+    rgbPalette_.shrink_to_fit();
+  }
+
+  Palette&
+  setPalette (pixels_t& palette) noexcept
+  {
+    clearAndResize(static_cast<uint32_t>(palette.size()));
+    rgbPalette_ = palette;
+    numColors_ = static_cast<uint32_t>(rgbPalette_.size());
+
+    return *this;
+  }
+
+  Palette&
+  setGrayScalePalette () noexcept
+  {
+    rgb::RGB rgbColor {};
+    u_char c {};
+    for (int i {0}; i <= 255; ++i)
+    {
+      c = static_cast<u_char>(i);
+      rgbColor.setRGB(c, c, c);
+      addRGBColor(rgbColor);
+    }
+
+    return *this;
   }
 
   Palette&
@@ -352,6 +418,7 @@ namespace sg::paletteTest {
 [[maybe_unused]] void testPalette_5();
 [[maybe_unused]] void testPalette_6();
 [[maybe_unused]] void testPalette_7();
+[[maybe_unused]] void testPalette_8();
 
 }  // namespace sg::paletteTest
 
