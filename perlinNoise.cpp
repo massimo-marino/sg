@@ -20,6 +20,7 @@
 // I ADDED AN EXTRA METHOD THAT GENERATES A NEW PERMUTATION VECTOR (THIS IS NOT
 // PRESENT IN THE ORIGINAL IMPLEMENTATION)
 ////////////////////////////////////////////////////////////////////////////////
+
 namespace sg {
 
 // Initialize with the reference values for the permutation vector

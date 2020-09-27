@@ -8,6 +8,7 @@
 
 #include <random>
 ////////////////////////////////////////////////////////////////////////////////
+
 namespace utilities {
 
 // Seed a random number engine with greater unpredictability.

@@ -8,7 +8,48 @@
 
 #include <unordered_set>
 ////////////////////////////////////////////////////////////////////////////////
+
 namespace sg::paletteTest {
+
+[[maybe_unused]]
+void testPalette_Full_RGB()
+{
+  palette::Palette p {};
+  p.allRGBColors();
+  std::cout << "palette size: " << p.size() << std::endl;
+  std::cout << "numColors: " << p.numColors();
+  p.saveRGBHexPalette("../palettes/generated/rgb/");
+}
+
+[[maybe_unused]]
+void testPalette_00()
+{
+  const uint32_t numColors {256 * 256 * 256};
+  float saturation {1.0f};
+  float brightness {1.0f};
+  palette::Palette p {};
+
+  while (saturation >= 0.0f)
+  {
+    p.makeCustomPalette(numColors, saturation, brightness);
+
+    std::cout << "\nnumColors, saturation, brightness: "
+              << numColors << ", "
+              << saturation << ", "
+              << brightness
+              << " -> palette size: " << p.size();
+    std::cout << "\n";
+
+    const std::string fileName {"../palettes/generated/tp00/s-" +
+                                std::to_string(saturation) +
+                                "-b-" + std::to_string(brightness) +"-"};
+    p.makePaletteImage(fileName);
+    p.saveRGBHexPalette(fileName);
+
+//    brightness = brightness - 0.1f;
+    saturation = saturation - 0.1f;
+  }
+}
 
 [[maybe_unused]]
 void testPalette_0()
@@ -107,6 +148,7 @@ void testPalette_2()
     palette::Palette p {nc};
     // palette image saved in a png file by default
     p.makePaletteImage("../palettes/generated/tp2/");
+    p.saveRGBHexPalette("../palettes/generated/tp2/");
     pl(p, nc);
   }
 }  // testPalette_2

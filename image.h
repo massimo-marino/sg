@@ -14,6 +14,7 @@
 #include <memory>
 #include <png.h>
 ////////////////////////////////////////////////////////////////////////////////
+
 namespace sg {
 
 using pixels_t = rgb::pixels_t;
@@ -52,7 +53,11 @@ protected:
 
 public:
   // create an empty default 100x100-sized image object
-  image() : width_(100), height_(100), size_(100 * 100), data_(static_cast<size_t>(100 * 100))
+  image() :
+  width_(100),
+  height_(100),
+  size_(100 * 100),
+  data_(static_cast<size_t>(100 * 100))
   {
     data_.reserve(size_);
   }
@@ -68,7 +73,7 @@ public:
   }
 
   // default dtor
-  virtual ~image();
+  virtual ~image() = default;
 
   // default copy ctor
   // usage:
@@ -192,15 +197,17 @@ private:
 
 public:
   // create a PNG default-sized object
-  png() : image() {}
+  png() :
+  image()
+  {}
 
   // create an "empty" PNG with a given width_ and height_; data_ is filled with zeros
   png(const uint32_t _width, const uint32_t _height, const unsigned long _bpp = 3) :
-          image(_width, _height),
-          bpp_(_bpp)
+  image(_width, _height),
+  bpp_(_bpp)
   {}
 
-  ~png();
+  ~png() = default;
 
   bool
   isPNG(const std::string& fname) const noexcept(false)
@@ -321,7 +328,10 @@ private:
 
 public:
   // create a PPM default-sized object
-  ppm() : image(), max_col_val_(255) {}
+  ppm() :
+  image(),
+  max_col_val_(255)
+  {}
 
   // create an "empty" PPM with a given width_ and height_; data_ is filled with zeros
   ppm(const uint32_t _width, const uint32_t _height, uint32_t _max_col_val = 255) :
@@ -329,7 +339,7 @@ public:
   max_col_val_(_max_col_val)
   {}
 
-  ~ppm();
+  ~ppm() = default;
 
   bool
   isPPM(const std::string& fname) const noexcept(false)
@@ -468,14 +478,16 @@ private:
 
 public:
   // create a BMP default-sized object
-  bmp() : image() {}
+  bmp() :
+  image()
+  {}
 
   // create an "empty" BMP with a given width_ and height_; data_ is filled with zeros
   bmp(const uint32_t _width, const uint32_t _height) :
   image(_width, _height)
   {}
 
-  ~bmp();
+  ~bmp() = default;
 
   bool isBMP(const std::string& fname) const noexcept(false)
   {
@@ -524,12 +536,3 @@ public:
 #pragma pack (pop)
 
 }  // namespace sg
-
-namespace sg::imageTest {
-
-[[maybe_unused]] void testPPM();
-[[maybe_unused]] void testBMP();
-[[maybe_unused]] void testPNG();
-[[maybe_unused]] void testImageFileFormat();
-
-}  // namespace sg::imageTest

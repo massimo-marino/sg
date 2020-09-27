@@ -1,21 +1,25 @@
 //
 // main.cpp
 //
-#include "perlinDemos.h"
-#include "palette.h"
-#include "paletteTest.h"
 #include "image.h"
+#include "rgbTest.h"
+#include "imageTest.h"
+#include "perlinDemos.h"
+#include "paletteTest.h"
 ////////////////////////////////////////////////////////////////////////////////
 
 [[maybe_unused]]
 static
-void fullTests()
+void
+fullTests()
 {
   sg::rgbTest::testRGB();
   sg::rgbTest::testhsv2rgb();
   sg::rgbTest::testrgb2hsv();
 
   // simple palette creations; saved in image files and text files
+  sg::paletteTest::testPalette_Full_RGB();
+  sg::paletteTest::testPalette_00();
   sg::paletteTest::testPalette_0();
   sg::paletteTest::testPalette_1();
   sg::paletteTest::testPalette_2();
@@ -40,9 +44,9 @@ void fullTests()
   sg::perlinTest::perlinDemo01();
 }
 
-int main()
+int
+main()
 {
   fullTests();
-
- return 0;
+  return 0;
 }

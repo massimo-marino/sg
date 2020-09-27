@@ -11,6 +11,7 @@
 #include <vector>
 #include <cmath>
 ////////////////////////////////////////////////////////////////////////////////
+
 namespace sg::rgb {
 
 // 0xAARRGGBB -> AA alpha, RR red, GG green, BB blue
@@ -250,13 +251,5 @@ private:
 using pixels_t = std::vector<rgb::RGB>;
 
 } // namespace sg::rgb
-
-namespace sg::rgbTest {
-
-[[maybe_unused]] void testRGB();
-[[maybe_unused]] void testhsv2rgb();
-[[maybe_unused]] void testrgb2hsv();
-
-}  // namespace sg::rgbTest
 
 std::ostream& operator<<(std::ostream &os, const sg::rgb::RGB& rgb);

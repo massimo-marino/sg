@@ -5,9 +5,12 @@
 //
 #ifndef SG_PALETTETEST_H
 #define SG_PALETTETEST_H
+////////////////////////////////////////////////////////////////////////////////
 
 namespace sg::paletteTest {
 
+[[maybe_unused]] void testPalette_Full_RGB();
+[[maybe_unused]] void testPalette_00();
 [[maybe_unused]] void testPalette_0();
 [[maybe_unused]] void testPalette_1();
 [[maybe_unused]] void testPalette_2();

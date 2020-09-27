@@ -14,7 +14,9 @@
 #include <vector>
 #include <type_traits>
 #include <algorithm>
+#include <unordered_set>
 ////////////////////////////////////////////////////////////////////////////////
+
 namespace sg::palette {
 
 #pragma pack (push, 1)
@@ -42,17 +44,20 @@ private:
     saturation_ = saturation;
     brightness_ = brightness;
 
-    float hue{0.0f};
-    rgb::RGB c{};
-    uint32_t step{0};
-    const float hueIncrement{360.0f / numColors_};
+    const float hueIncrement {360.0f / numColors_};
+    float hue {0.0f};
+    rgb::RGB c {};
 
     rgbPalette_.clear();
     rgbPalette_.reserve(numColors_);
-    for (step = 0; (step < numColors_) && (hue < 360.0f); ++step)
+    for (uint32_t step {1}; hue < 360.0f; ++step)
     {
       rgbPalette_.push_back(c.hsv2rgb(hue, saturation_, brightness_));
       hue = hue + hueIncrement;
+      if (numColors_ == step)
+      {
+        break;
+      }
     }
   }  // makeHSBPalette
 
@@ -105,11 +110,22 @@ public:
     return rgbPalette_;
   }
 
+  // current actual number of colors in the palette: in general size() <= numColors()
+  // when the palette is being used: size() == numColors()
   constexpr
   size_t
   size () const noexcept
   {
     return rgbPalette_.size();
+  }
+
+  // the expected number of colors in the palette: in general size() <= numColors()
+  // when the palette is being used: size() == numColors()
+  constexpr
+  uint32_t
+  numColors () const noexcept
+  {
+    return numColors_;
   }
 
   Palette&
@@ -132,7 +148,6 @@ public:
   addRGBColor (const rgb::RGB color) noexcept
   {
     rgbPalette_.push_back(color);
-    ++numColors_;
 
     return *this;
   }
@@ -148,10 +163,10 @@ public:
   void
   clearAndResize (const uint32_t numColors) const noexcept
   {
-    numColors_ = numColors;
     rgbPalette_.clear();
-    rgbPalette_.reserve(numColors_);
     rgbPalette_.shrink_to_fit();
+    numColors_ = numColors;
+    rgbPalette_.reserve(numColors_);
   }
 
   Palette&
@@ -160,6 +175,34 @@ public:
     clearAndResize(static_cast<uint32_t>(palette.size()));
     rgbPalette_ = palette;
     numColors_ = static_cast<uint32_t>(rgbPalette_.size());
+
+    return *this;
+  }
+
+  Palette&
+  allRGBColors () noexcept
+  {
+    rgb::RGB RGBColor {};
+    u_char R {};
+    u_char G {};
+    u_char B {};
+
+    clearAndResize(256*256*256);
+
+    for (int rI {0}; rI <= 255; ++rI)
+    {
+      for (int gI {0}; gI <= 255; ++gI)
+      {
+        for (int bI {0}; bI <= 255; ++bI)
+        {
+          R = static_cast<u_char>(rI);
+          G = static_cast<u_char>(gI);
+          B = static_cast<u_char>(bI);
+          RGBColor.setRGB(R, G, B);
+          addRGBColor(RGBColor);
+        }
+      }
+    }
 
     return *this;
   }
@@ -175,6 +218,27 @@ public:
       rgbColor.setRGB(c, c, c);
       addRGBColor(rgbColor);
     }
+
+    return *this;
+  }
+
+  Palette&
+  makeCustomPalette (const uint32_t numColors,
+                     const float saturation,
+                     const float brightness) noexcept
+  {
+    std::unordered_set<sg::rgb::RGB_t> colorSet(numColors);
+
+    makeHSBPalette(numColors, saturation, brightness);
+    for (const rgb::RGB& RGBColor : rgbPalette_)
+    {
+      // insert unique color elements (no copies)
+      colorSet.insert(RGBColor);
+    }
+    // create the final palette with unique colors
+    pixels_t colorV(colorSet.begin(), colorSet.end());
+    // replace the palette
+    setPalette(colorV);
 
     return *this;
   }
@@ -247,8 +311,9 @@ public:
   bool
   saveHSBPalette(const std::string& fname = "") const noexcept(false)
   {
+    const uint32_t numColors {static_cast<uint32_t>(size())};
     const std::string mode {"hsb"};
-    const std::string fn {fname + mode + "-palette-" + std::to_string(numColors_) + ".txt"};
+    const std::string fn {fname + mode + "-palette-" + std::to_string(numColors) + ".txt"};
     std::ofstream outf(fn.c_str(), std::ios::out | std::ios::binary | std::ios::trunc);
     uint16_t i {0};
 
@@ -280,8 +345,9 @@ public:
   bool
   saveRGBPalette(const std::string& fname = "") const noexcept(false)
   {
+    const uint32_t numColors {static_cast<uint32_t>(size())};
     const std::string mode {"rgb"};
-    const std::string fn {fname + mode + "-palette-" + std::to_string(numColors_) + ".txt"};
+    const std::string fn {fname + mode + "-palette-" + std::to_string(numColors) + ".txt"};
     std::ofstream outf(fn.c_str(), std::ios::out | std::ios::binary | std::ios::trunc);
     uint16_t i {0};
 
@@ -306,8 +372,9 @@ public:
   bool
   saveRGBHexPalette(const std::string& fname = "") const noexcept(false)
   {
+    const uint32_t numColors {static_cast<uint32_t>(size())};
     const std::string mode {"rgbhex"};
-    const std::string fn {fname + mode + "-palette-" + std::to_string(numColors_) + ".txt"};
+    const std::string fn {fname + mode + "-palette-" + std::to_string(numColors) + ".txt"};
     std::ofstream outf(fn.c_str(), std::ios::out | std::ios::binary | std::ios::trunc);
     uint16_t i {0};
 
@@ -340,19 +407,21 @@ public:
   bool
   makePaletteImage(const std::string& fname = "") const noexcept(false)
   {
+    const uint32_t numColors {static_cast<uint32_t>(size())};
+
     // Define the size_ of the image in pixels
     // bwidth: the width of a single color band in the color map
     unsigned int bwidth {1};
     // bwidth is chosen depending on the number of colors
-    if ( numColors_ > 100 )
+    if (numColors > 100 )
     {
       bwidth = 2;
     }
-    else if ( numColors_ > 50 )
+    else if (numColors > 50 )
     {
       bwidth = 8;
     }
-    else if ( numColors_ > 25 )
+    else if (numColors > 25 )
     {
       bwidth = 10;
     }
@@ -363,7 +432,7 @@ public:
     // bheight: the height of a single color band in the color map,
     // same value of the full image height
     const unsigned int bheight {100};
-    const unsigned int width {bwidth * numColors_};
+    const unsigned int width {bwidth * numColors};
     const unsigned int height {bheight};
 
     // Create an empty BMP/PPM/PNG image
@@ -396,7 +465,7 @@ public:
     const std::string fileExtension { ((std::is_same<T, sg::ppm>::value) ? ppmExtension :
                                        ((std::is_same<T, sg::bmp>::value) ? bmpExtension :
                                         ((std::is_same<T, sg::png>::value) ? pngExtension : ".img"))) };
-    const std::string paletteFileName {fname + "palette-" + std::to_string(numColors_) + fileExtension};
+    const std::string paletteFileName {fname + "palette-" + std::to_string(numColors) + fileExtension};
 
     // Save the image in a binary BMP/PPM/PNG file
     return image.write(paletteFileName);
