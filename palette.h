@@ -408,18 +408,4 @@ public:
 
 } // namespace sg::palette
 
-namespace sg::paletteTest {
-
-[[maybe_unused]] void testPalette_0();
-[[maybe_unused]] void testPalette_1();
-[[maybe_unused]] void testPalette_2();
-[[maybe_unused]] void testPalette_3();
-[[maybe_unused]] void testPalette_4();
-[[maybe_unused]] void testPalette_5();
-[[maybe_unused]] void testPalette_6();
-[[maybe_unused]] void testPalette_7();
-[[maybe_unused]] void testPalette_8();
-
-}  // namespace sg::paletteTest
-
 std::ostream& operator<<(std::ostream &os, const  sg::palette::Palette& p);
