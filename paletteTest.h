@@ -3,8 +3,7 @@
 //
 // Created by massimo on 9/27/20.
 //
-#ifndef SG_PALETTETEST_H
-#define SG_PALETTETEST_H
+#pragma once
 ////////////////////////////////////////////////////////////////////////////////
 
 namespace sg::paletteTest {
@@ -22,5 +21,3 @@ namespace sg::paletteTest {
 [[maybe_unused]] void testPalette_8();
 
 }  // namespace sg::paletteTest
-
-#endif //SG_PALETTETEST_H

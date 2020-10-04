@@ -43,7 +43,7 @@ void testPalette_00()
     const std::string fileName {"../palettes/generated/tp00/s-" +
                                 std::to_string(saturation) +
                                 "-b-" + std::to_string(brightness) +"-"};
-    p.makePaletteImage(fileName);
+    p.makePaletteImage<sg::bmp>(fileName);
     p.saveRGBHexPalette(fileName);
 
 //    brightness = brightness - 0.1f;

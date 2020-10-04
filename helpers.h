@@ -60,7 +60,8 @@ std::ostream& operator<<(std::ostream& os, const std::tuple<T0, T...>& t)
   return os << '}';
 }
 
-std::ostream& operator<<(std::ostream& os, const std::tuple<>&);
+// the empty tuple
+std::ostream &operator<<(std::ostream &os, const std::tuple<>&);
 ////////////////////////////////////////////////////////////////////////////////
 //
 // helper function to print a tuple of any size from:

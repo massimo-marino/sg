@@ -2,6 +2,7 @@
 // main.cpp
 //
 #include "image.h"
+#include "palette.h"
 #include "rgbTest.h"
 #include "imageTest.h"
 #include "perlinDemos.h"

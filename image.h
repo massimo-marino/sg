@@ -33,7 +33,7 @@ protected:
   mutable pixels_t data_ {};
 
   bool
-  checkGraphicFile(const std::string &path, const std::string& magic) const noexcept(false)
+  checkGraphicFile(const std::string &path, const std::string& magic, const ulong offset = 0) const noexcept(false)
   {
     if (std::ifstream ifs {path, std::ios_base::binary})
     {
@@ -41,6 +41,7 @@ protected:
       auto magicFromFile {std::make_unique<char[]>(numChars + 1)};
       size_t i {0};
 
+      ifs.seekg(offset);
       for (i = 0; i < numChars; ++i)
       {
         ifs >> magicFromFile[i];
@@ -209,8 +210,15 @@ public:
 
   ~png() = default;
 
+  // png signature: 0x?? 0x50 0x4E 0x47
   bool
   isPNG(const std::string& fname) const noexcept(false)
+  {
+    return checkGraphicFile(fname, "PNG", 1);
+  }
+
+  bool
+  isPNGlib(const std::string& fname) const noexcept(false)
   {
     std::ifstream inf(fname, std::ios::in | std::ofstream::binary);
     if ( !inf.is_open() )
@@ -341,6 +349,7 @@ public:
 
   ~ppm() = default;
 
+  // ppm signature: 0x50 0x36
   bool
   isPPM(const std::string& fname) const noexcept(false)
   {
@@ -489,7 +498,9 @@ public:
 
   ~bmp() = default;
 
-  bool isBMP(const std::string& fname) const noexcept(false)
+  // bmp signature: 0x42 0x4D
+  bool
+  isBMP(const std::string& fname) const noexcept(false)
   {
     return checkGraphicFile(fname, "BM");
   }
