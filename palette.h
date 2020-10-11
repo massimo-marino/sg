@@ -32,6 +32,7 @@ private:
   mutable float saturation_ {numColorsDefault_};
   mutable float brightness_ {numColorsDefault_};
   mutable pixels_t rgbPalette_ {};
+  mutable std::string order_ {};
 
   // saturation, brightness in [0,1]
   // hue in [0,360]
@@ -62,11 +63,19 @@ private:
   }  // makeHSBPalette
 
 public:
+  static const std::string rgbHexPaletteFileNameExtension_;
+
   // default ctor
   explicit
   Palette() :
   numColors_(0)
   {}
+
+  explicit
+  Palette(const int32_t numColors)
+  {
+    makeHSBPalette(numColors);
+  }
 
   explicit
   Palette(const uint32_t numColors)
@@ -247,6 +256,7 @@ public:
   sortPalette() noexcept
   {
     std::sort(rgbPalette_.begin(), rgbPalette_.end());
+    setOrder("sorted-");
 
     return *this;
   }
@@ -261,6 +271,8 @@ public:
 
     // Shuffle using the above random engine
     std::shuffle(rgbPalette_.begin(), rgbPalette_.end(), engine);
+
+    setOrder("shuffled-");
 
     return *this;
   }  // shufflePalette
@@ -312,8 +324,8 @@ public:
   saveHSBPalette(const std::string& fname = "") const noexcept(false)
   {
     const uint32_t numColors {static_cast<uint32_t>(size())};
-    const std::string mode {"hsb"};
-    const std::string fn {fname + mode + "-palette-" + std::to_string(numColors) + ".txt"};
+    const std::string mode {"hsb-"};
+    const std::string fn {fname + mode + getOrder() + "palette-" + std::to_string(numColors) + ".txt"};
     std::ofstream outf(fn.c_str(), std::ios::out | std::ios::binary | std::ios::trunc);
     uint16_t i {0};
 
@@ -346,8 +358,8 @@ public:
   saveRGBPalette(const std::string& fname = "") const noexcept(false)
   {
     const uint32_t numColors {static_cast<uint32_t>(size())};
-    const std::string mode {"rgb"};
-    const std::string fn {fname + mode + "-palette-" + std::to_string(numColors) + ".txt"};
+    const std::string mode {"rgb-"};
+    const std::string fn {fname + mode + getOrder() + "palette-" + std::to_string(numColors) + ".txt"};
     std::ofstream outf(fn.c_str(), std::ios::out | std::ios::binary | std::ios::trunc);
     uint16_t i {0};
 
@@ -373,8 +385,8 @@ public:
   saveRGBHexPalette(const std::string& fname = "") const noexcept(false)
   {
     const uint32_t numColors {static_cast<uint32_t>(size())};
-    const std::string mode {"rgbhex"};
-    const std::string fn {fname + mode + "-palette-" + std::to_string(numColors) + ".txt"};
+    const std::string mode {"rgbhex-"};
+    const std::string fn {fname + mode + getOrder() + "palette-" + std::to_string(numColors) + ".txt"};
     std::ofstream outf(fn.c_str(), std::ios::out | std::ios::binary | std::ios::trunc);
     uint16_t i {0};
 
@@ -465,12 +477,21 @@ public:
     const std::string fileExtension { ((std::is_same<T, sg::ppm>::value) ? ppmExtension :
                                        ((std::is_same<T, sg::bmp>::value) ? bmpExtension :
                                         ((std::is_same<T, sg::png>::value) ? pngExtension : ".img"))) };
-    const std::string paletteFileName {fname + "palette-" + std::to_string(numColors) + fileExtension};
+    const std::string paletteFileName {fname + getOrder() + "palette-" + std::to_string(numColors) + fileExtension};
 
     // Save the image in a binary BMP/PPM/PNG file
     return image.write(paletteFileName);
   }  // makePaletteImage
 
+  static
+  std::string
+  getRgbHexPaletteFileNameExtension()
+  {
+    return rgbHexPaletteFileNameExtension_;
+  }
+
+  std::string getOrder() const;
+  void setOrder(const std::string& order);
 };  // class Palette
 
 #pragma pack (pop)

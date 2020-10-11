@@ -5,6 +5,21 @@
 //
 #include "palette.h"
 ////////////////////////////////////////////////////////////////////////////////
+namespace sg::palette {
+
+const std::string Palette::rgbHexPaletteFileNameExtension_ {".rgbhex"};
+
+std::string Palette::getOrder() const
+{
+  return order_;
+}
+
+void Palette::setOrder(const std::string& order)
+{
+  order_ = order;
+}
+
+}
 
 std::ostream& operator<<(std::ostream &os, const sg::palette::Palette& p)
 {
